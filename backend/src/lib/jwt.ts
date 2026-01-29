@@ -12,19 +12,15 @@ export interface JwtVerifyResult {
 }
 
 export const generateAccessToken = (userId: string): string => {
-  return jwt.sign(
-    { userId } as JwtPayload,
-    env.JWT_SECRET,
-    { expiresIn: env.JWT_EXPIRES_IN } as SignOptions
-  );
+  return jwt.sign({ userId } as JwtPayload, env.JWT_SECRET, {
+    expiresIn: env.JWT_EXPIRES_IN,
+  } as SignOptions);
 };
 
 export const generateRefreshToken = (userId: string): string => {
-  return jwt.sign(
-    { userId } as JwtPayload,
-    env.JWT_REFRESH_SECRET,
-    { expiresIn: env.JWT_REFRESH_EXPIRES_IN } as SignOptions
-  );
+  return jwt.sign({ userId } as JwtPayload, env.JWT_REFRESH_SECRET, {
+    expiresIn: env.JWT_REFRESH_EXPIRES_IN,
+  } as SignOptions);
 };
 
 export const verifyAccessToken = (token: string): JwtVerifyResult => {

@@ -60,11 +60,9 @@ describe('JWT 유틸리티', () => {
 
     it('만료된 토큰을 검증하면 expired: true를 반환해야 함', async () => {
       // 1ms 후 만료되는 토큰 생성
-      const expiredToken = jwt.sign(
-        { userId: testUserId } as JwtPayload,
-        env.JWT_SECRET,
-        { expiresIn: '1ms' }
-      );
+      const expiredToken = jwt.sign({ userId: testUserId } as JwtPayload, env.JWT_SECRET, {
+        expiresIn: '1ms',
+      });
 
       // 토큰이 만료될 때까지 대기
       await new Promise((resolve) => setTimeout(resolve, 10));
@@ -77,11 +75,9 @@ describe('JWT 유틸리티', () => {
     });
 
     it('잘못된 시크릿으로 생성된 토큰을 검증하면 valid: false를 반환해야 함', () => {
-      const invalidToken = jwt.sign(
-        { userId: testUserId } as JwtPayload,
-        'wrong-secret',
-        { expiresIn: '1h' }
-      );
+      const invalidToken = jwt.sign({ userId: testUserId } as JwtPayload, 'wrong-secret', {
+        expiresIn: '1h',
+      });
 
       const result = verifyAccessToken(invalidToken);
 
@@ -113,11 +109,9 @@ describe('JWT 유틸리티', () => {
 
     it('만료된 토큰을 검증하면 expired: true를 반환해야 함', async () => {
       // 1ms 후 만료되는 토큰 생성
-      const expiredToken = jwt.sign(
-        { userId: testUserId } as JwtPayload,
-        env.JWT_REFRESH_SECRET,
-        { expiresIn: '1ms' }
-      );
+      const expiredToken = jwt.sign({ userId: testUserId } as JwtPayload, env.JWT_REFRESH_SECRET, {
+        expiresIn: '1ms',
+      });
 
       // 토큰이 만료될 때까지 대기
       await new Promise((resolve) => setTimeout(resolve, 10));
@@ -130,11 +124,9 @@ describe('JWT 유틸리티', () => {
     });
 
     it('잘못된 시크릿으로 생성된 토큰을 검증하면 valid: false를 반환해야 함', () => {
-      const invalidToken = jwt.sign(
-        { userId: testUserId } as JwtPayload,
-        'wrong-secret',
-        { expiresIn: '1h' }
-      );
+      const invalidToken = jwt.sign({ userId: testUserId } as JwtPayload, 'wrong-secret', {
+        expiresIn: '1h',
+      });
 
       const result = verifyRefreshToken(invalidToken);
 
