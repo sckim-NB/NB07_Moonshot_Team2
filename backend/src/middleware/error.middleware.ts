@@ -9,7 +9,6 @@ export const errorMiddleware = (err: Error, _req: Request, res: Response, _next:
   // AppError (커스텀 에러)
   if (err instanceof AppError) {
     return res.status(err.statusCode).json({
-      status: 'error',
       message: err.message,
     });
   }
@@ -17,12 +16,7 @@ export const errorMiddleware = (err: Error, _req: Request, res: Response, _next:
   // Zod Validation Error
   if (err instanceof ZodError) {
     return res.status(400).json({
-      status: 'error',
-      message: 'Validation failed',
-      errors: err.issues.map((issue) => ({
-        path: issue.path.join('.'),
-        message: issue.message,
-      })),
+      message: '잘못된 요청 형식',
     });
   }
 
@@ -31,25 +25,21 @@ export const errorMiddleware = (err: Error, _req: Request, res: Response, _next:
     // Unique constraint violation
     if (err.code === 'P2002') {
       return res.status(409).json({
-        status: 'error',
-        message: 'Resource already exists',
-        field: (err.meta?.target as string[]) || [],
+        message: '이미 존재하는 데이터입니다',
       });
     }
 
     // Foreign key constraint violation
     if (err.code === 'P2003') {
       return res.status(400).json({
-        status: 'error',
-        message: 'Invalid reference to related resource',
+        message: '잘못된 데이터 형식',
       });
     }
 
     // Record not found
     if (err.code === 'P2025') {
       return res.status(404).json({
-        status: 'error',
-        message: 'Resource not found',
+        message: '존재하지 않는 리소스입니다',
       });
     }
   }
@@ -57,15 +47,13 @@ export const errorMiddleware = (err: Error, _req: Request, res: Response, _next:
   // Prisma Validation Error
   if (err instanceof Prisma.PrismaClientValidationError) {
     return res.status(400).json({
-      status: 'error',
-      message: 'Invalid data provided',
+      message: '잘못된 데이터 형식',
     });
   }
 
   // Default Error (500)
   return res.status(500).json({
-    status: 'error',
-    message: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message,
+    message: process.env.NODE_ENV === 'production' ? '서버 오류가 발생했습니다' : err.message,
     ...(process.env.NODE_ENV !== 'production' && { stack: err.stack }),
   });
 };
