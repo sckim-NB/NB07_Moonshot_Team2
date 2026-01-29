@@ -27,7 +27,7 @@ jobs:
           cache-dependency-path: backend/package-lock.json
       
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
       
       - name: Make test script executable
         run: chmod +x scripts/test.sh
