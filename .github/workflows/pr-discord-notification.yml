@@ -1,0 +1,75 @@
+name: PR Discord Notification
+
+on:
+  pull_request:
+    types: [opened, closed]
+    branches:
+      - main
+      - develop
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    # PR이 병합된 경우만 처리 (opened는 항상 실행, closed는 merged일 때만)
+    if: github.event.action == 'opened' || (github.event.action == 'closed' && github.event.pull_request.merged == true)
+    
+    steps:
+      - name: Send Discord Notification
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          # PR 정보 추출
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+          PR_URL="${{ github.event.pull_request.html_url }}"
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+          HEAD_BRANCH="${{ github.event.pull_request.head.ref }}"
+          
+          # 액션 타입에 따른 메시지 설정
+          if [ "${{ github.event.action }}" = "opened" ]; then
+            ACTION_TEXT="🔔 새로운 PR이 열렸습니다"
+            COLOR="3066993"  # 초록색
+            EMOJI="🚀"
+          else
+            ACTION_TEXT="✅ PR이 병합되었습니다"
+            COLOR="5793266"  # 보라색
+            EMOJI="🎉"
+          fi
+          
+          # Discord Webhook 페이로드 생성
+          PAYLOAD=$(cat <<EOF
+          {
+            "embeds": [{
+              "title": "${EMOJI} PR #${PR_NUMBER}: ${PR_TITLE}",
+              "url": "${PR_URL}",
+              "color": ${COLOR},
+              "fields": [
+                {
+                  "name": "상태",
+                  "value": "${ACTION_TEXT}",
+                  "inline": true
+                },
+                {
+                  "name": "작성자",
+                  "value": "${PR_AUTHOR}",
+                  "inline": true
+                },
+                {
+                  "name": "브랜치",
+                  "value": "\`${HEAD_BRANCH}\` → \`${BASE_BRANCH}\`",
+                  "inline": false
+                }
+              ],
+              "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
+            }]
+          }
+          EOF
+          )
+          
+          # Discord로 전송
+          curl -X POST "${DISCORD_WEBHOOK_URL}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD"
+          
+          echo "✅ Discord 알림 전송 완료"

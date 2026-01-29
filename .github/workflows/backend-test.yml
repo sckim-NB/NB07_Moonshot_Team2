@@ -1,0 +1,94 @@
+name: Backend Test Automation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-test.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: backend
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Make test script executable
+        run: chmod +x scripts/test.sh
+      
+      - name: Run test script
+        run: ./scripts/test.sh
+      
+      - name: Send Discord notification on success
+        if: success()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -X POST "$DISCORD_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "embeds": [{
+                "title": "✅ Backend Tests Passed",
+                "description": "PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}",
+                "color": 3066993,
+                "fields": [
+                  {
+                    "name": "Author",
+                    "value": "${{ github.event.pull_request.user.login }}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Branch",
+                    "value": "${{ github.event.pull_request.head.ref }}",
+                    "inline": true
+                  }
+                ],
+                "url": "${{ github.event.pull_request.html_url }}",
+                "timestamp": "${{ github.event.pull_request.updated_at }}"
+              }]
+            }'
+      
+      - name: Send Discord notification on failure
+        if: failure()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -X POST "$DISCORD_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "embeds": [{
+                "title": "❌ Backend Tests Failed",
+                "description": "PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}",
+                "color": 15158332,
+                "fields": [
+                  {
+                    "name": "Author",
+                    "value": "${{ github.event.pull_request.user.login }}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Branch",
+                    "value": "${{ github.event.pull_request.head.ref }}",
+                    "inline": true
+                  }
+                ],
+                "url": "${{ github.event.pull_request.html_url }}",
+                "timestamp": "${{ github.event.pull_request.updated_at }}"
+              }]
+            }'
