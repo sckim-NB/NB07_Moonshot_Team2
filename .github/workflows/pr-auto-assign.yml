@@ -1,0 +1,83 @@
+name: PR Auto Assign
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  auto-assign:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    
+    steps:
+      - name: Set Assignee, Reviewers, and Labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prAuthor = context.payload.pull_request.user.login;
+            const prNumber = context.payload.pull_request.number;
+            const branchName = context.payload.pull_request.head.ref;
+            
+            // 전체 팀원 목록
+            const allReviewers = ['hiiisiii', 'sckim-NB', 'ktmgw486', 'HenryVoid'];
+            
+            // PR 작성자를 제외한 리뷰어 목록
+            const reviewers = allReviewers.filter(reviewer => reviewer !== prAuthor);
+            
+            // 1. Assignee 설정 (PR 작성자)
+            await github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              assignees: [prAuthor]
+            });
+            console.log(`✅ Assignee 설정 완료: ${prAuthor}`);
+            
+            // 2. Reviewers 설정 (작성자 제외)
+            if (reviewers.length > 0) {
+              await github.rest.pulls.requestReviewers({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+                reviewers: reviewers
+              });
+              console.log(`✅ Reviewers 설정 완료: ${reviewers.join(', ')}`);
+            }
+            
+            // 3. Label 설정 (브랜치 이름 기반)
+            const labels = [];
+            
+            if (branchName.startsWith('feature/')) {
+              labels.push('feature');
+            } else if (branchName.startsWith('fix/')) {
+              labels.push('bug');
+            } else if (branchName.startsWith('chore/')) {
+              labels.push('chore');
+            } else if (branchName.startsWith('docs/')) {
+              labels.push('documentation');
+            } else if (branchName.startsWith('refactor/')) {
+              labels.push('refactor');
+            } else if (branchName.startsWith('test/')) {
+              labels.push('test');
+            }
+            
+            // backend 또는 frontend 라벨 추가
+            if (branchName.includes('backend')) {
+              labels.push('backend');
+            }
+            if (branchName.includes('frontend')) {
+              labels.push('frontend');
+            }
+            
+            // 라벨이 있으면 설정
+            if (labels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                labels: labels
+              });
+              console.log(`✅ Labels 설정 완료: ${labels.join(', ')}`);
+            }
