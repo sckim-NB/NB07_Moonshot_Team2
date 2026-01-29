@@ -1,0 +1,192 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(cuid())
+  email         String          @unique
+  name          String
+  password      String?
+  profileImage  String?
+  provider      Provider        @default(LOCAL)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  ownedProjects Project[]       @relation("ProjectOwner")
+  memberships   ProjectMember[]
+  tasks         Task[]          @relation("TaskAssignee")
+  comments      Comment[]
+  invitations   Invitation[]
+
+  @@map("users")
+}
+
+enum Provider {
+  LOCAL
+  GOOGLE
+}
+
+model Project {
+  id          String          @id @default(cuid())
+  name        String
+  description String?
+  ownerId     String
+  owner       User            @relation("ProjectOwner", fields: [ownerId], references: [id], onDelete: Restrict)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  members     ProjectMember[]
+  tasks       Task[]
+  invitations Invitation[]
+
+  @@index([ownerId])
+  @@map("projects")
+}
+
+model ProjectMember {
+  id        String       @id @default(cuid())
+  projectId String
+  userId    String
+  role      MemberRole   @default(MEMBER)
+  status    InviteStatus @default(ACCEPTED)
+  joinedAt  DateTime     @default(now())
+  project   Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@index([userId])
+  @@index([status])
+  @@map("project_members")
+}
+
+enum MemberRole {
+  OWNER
+  MEMBER
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model Invitation {
+  id            String       @id @default(cuid())
+  projectId     String
+  inviterId     String
+  inviteeEmail  String
+  status        InviteStatus @default(PENDING)
+  createdAt     DateTime     @default(now())
+  expiresAt     DateTime
+  project       Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  inviter       User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([inviterId])
+  @@index([status])
+  @@index([expiresAt])
+  @@map("invitations")
+}
+
+model Task {
+  id          String       @id @default(cuid())
+  title       String
+  description String?
+  projectId   String
+  assigneeId  String
+  status      TaskStatus   @default(TODO)
+  startYear   Int?
+  startMonth  Int?
+  startDay    Int?
+  endYear     Int?
+  endMonth    Int?
+  endDay      Int?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignee    User         @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: Restrict)
+  subtasks    Subtask[]
+  comments    Comment[]
+  attachments Attachment[]
+  taskTags    TaskTag[]
+
+  @@index([projectId])
+  @@index([assigneeId])
+  @@index([status])
+  @@index([endYear, endMonth, endDay])
+  @@map("tasks")
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+model Tag {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  taskTags  TaskTag[]
+
+  @@map("tags")
+}
+
+model TaskTag {
+  taskId String
+  tagId  String
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, tagId])
+  @@index([taskId])
+  @@index([tagId])
+  @@map("task_tags")
+}
+
+model Subtask {
+  id        String     @id @default(cuid())
+  taskId    String
+  title     String
+  status    TaskStatus @default(TODO)
+  order     Int        @default(0)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  task      Task       @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@index([order])
+  @@map("subtasks")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  taskId    String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@index([userId])
+  @@map("comments")
+}
+
+model Attachment {
+  id         String   @id @default(cuid())
+  taskId     String
+  filename   String
+  filepath   String
+  mimetype   String
+  size       Int
+  uploadedAt DateTime @default(now())
+  task       Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@map("attachments")
+}
