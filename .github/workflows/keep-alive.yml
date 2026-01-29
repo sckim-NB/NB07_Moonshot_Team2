@@ -1,0 +1,22 @@
+name: Keep Render Backend Alive
+
+on:
+  schedule:
+    # 평일 (월-금) 09:00-18:00 KST = 00:00-09:00 UTC
+    # 10분마다 실행
+    - cron: '*/10 0-9 * * 1-5'
+  workflow_dispatch: # 수동 실행 가능
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render Backend
+        run: |
+          response=$(curl -f -s -o /dev/null -w "%{http_code}" https://moonshot-backend.onrender.com/health)
+          if [ $response -eq 200 ]; then
+            echo "✅ Backend is alive (HTTP $response)"
+          else
+            echo "❌ Backend returned HTTP $response"
+            exit 1
+          fi
