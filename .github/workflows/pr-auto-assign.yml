@@ -21,7 +21,7 @@ jobs:
             const branchName = context.payload.pull_request.head.ref;
             
             // 전체 팀원 목록
-            const allReviewers = ['hiiisiii', 'sckim-NB', '구창민', 'HenryVoid'];
+            const allReviewers = ['hiiisiii', 'sckim-NB', 'ktmgw486', 'HenryVoid'];
             
             // PR 작성자를 제외한 리뷰어 목록
             const reviewers = allReviewers.filter(reviewer => reviewer !== prAuthor);
