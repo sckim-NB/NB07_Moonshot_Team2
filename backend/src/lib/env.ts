@@ -9,7 +9,7 @@ const envSchema = z.object({
 
   // App
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  PORT: z.string().transform(Number).default('3000'),
+  PORT: z.string().default('3000').transform(Number),
   FRONTEND_URL: z.string().default('http://localhost:5173'),
 
   // JWT
@@ -24,8 +24,8 @@ const envSchema = z.object({
   CLOUDINARY_API_SECRET: z.string(),
 
   // File Upload
-  MAX_FILE_SIZE: z.string().transform(Number).default('5242880'), // 5MB
-  MAX_DOCUMENT_SIZE: z.string().transform(Number).default('10485760'), // 10MB
+  MAX_FILE_SIZE: z.string().default('5242880').transform(Number), // 5MB
+  MAX_DOCUMENT_SIZE: z.string().default('10485760').transform(Number), // 10MB
 
   // Google OAuth (선택사항 - 나중에 구현)
   GOOGLE_CLIENT_ID: z.string().optional(),
@@ -37,7 +37,10 @@ const envSchema = z.object({
 
   // Email (선택사항 - 나중에 구현)
   SMTP_HOST: z.string().optional(),
-  SMTP_PORT: z.string().transform(Number).optional(),
+  SMTP_PORT: z
+    .string()
+    .optional()
+    .transform((val) => (val ? Number(val) : undefined)),
   SMTP_USER: z.string().optional(),
   SMTP_PASSWORD: z.string().optional(),
   EMAIL_FROM: z.string().optional(),

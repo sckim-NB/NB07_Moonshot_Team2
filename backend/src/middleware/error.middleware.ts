@@ -3,12 +3,7 @@ import { AppError } from '../lib/errors.js';
 import { ZodError } from 'zod';
 import { Prisma } from '@prisma/client';
 
-export const errorMiddleware = (
-  err: Error,
-  _req: Request,
-  res: Response,
-  _next: NextFunction
-) => {
+export const errorMiddleware = (err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Error:', err);
 
   // AppError (커스텀 에러)
@@ -24,9 +19,9 @@ export const errorMiddleware = (
     return res.status(400).json({
       status: 'error',
       message: 'Validation failed',
-      errors: err.errors.map((e) => ({
-        path: e.path.join('.'),
-        message: e.message,
+      errors: err.issues.map((issue) => ({
+        path: issue.path.join('.'),
+        message: issue.message,
       })),
     });
   }

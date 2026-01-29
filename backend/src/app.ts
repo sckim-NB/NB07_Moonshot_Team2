@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import 'express-async-errors';
 import { errorMiddleware } from './middleware/error.middleware.js';
 import { env } from './lib/env.js';
 
