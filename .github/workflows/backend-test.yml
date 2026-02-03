@@ -11,6 +11,21 @@ jobs:
   test:
     runs-on: ubuntu-latest
     
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U test -d test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     defaults:
       run:
         working-directory: backend
@@ -49,6 +64,9 @@ jobs:
           GOOGLE_CLIENT_SECRET="test-google-client-secret"
           GOOGLE_CALLBACK_URL="http://localhost:3000/auth/google/callback"
           EOF
+      
+      - name: Run Prisma migrate (db push)
+        run: npm run db:push
       
       - name: Make test script executable
         run: chmod +x scripts/test.sh
