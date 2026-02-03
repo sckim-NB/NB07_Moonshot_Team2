@@ -4,7 +4,12 @@ export class RegisterRequestDto {
   name: string;
   profileImage?: string | null;
 
-  constructor(data: { email: string; password: string; name: string; profileImage?: string | null }) {
+  constructor(data: {
+    email: string;
+    password: string;
+    name: string;
+    profileImage?: string | null;
+  }) {
     this.email = data.email;
     this.password = data.password;
     this.name = data.name;

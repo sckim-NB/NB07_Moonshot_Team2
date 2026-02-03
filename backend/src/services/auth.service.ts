@@ -9,7 +9,11 @@ import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '.
 import { comparePassword, hashPassword } from '../lib/password.js';
 import * as userRepository from '../repositories/user.repository.js';
 import { LoginInput, RegisterInput } from '../schemas/auth.schema.js';
-import { RegisterRequestDto, LoginRequestDto, RefreshTokenRequestDto } from '../classes/dtos/auth.request.dto.js';
+import {
+  RegisterRequestDto,
+  LoginRequestDto,
+  RefreshTokenRequestDto,
+} from '../classes/dtos/auth.request.dto.js';
 import {
   UserResponseDto,
   AuthTokensResponseDto,

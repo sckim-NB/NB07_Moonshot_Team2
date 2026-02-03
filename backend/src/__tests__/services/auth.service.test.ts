@@ -76,7 +76,9 @@ describe('Auth Service', () => {
         password: 'Test1234',
       };
 
-      await expect(authService.login(loginData)).rejects.toThrow('존재하지 않거나 비밀번호가 일치하지 않습니다');
+      await expect(authService.login(loginData)).rejects.toThrow(
+        '존재하지 않거나 비밀번호가 일치하지 않습니다'
+      );
     });
 
     it('잘못된 비밀번호로 InvalidCredentialsError를 던져야 함', async () => {
@@ -85,7 +87,9 @@ describe('Auth Service', () => {
         password: 'WrongPassword123',
       };
 
-      await expect(authService.login(loginData)).rejects.toThrow('존재하지 않거나 비밀번호가 일치하지 않습니다');
+      await expect(authService.login(loginData)).rejects.toThrow(
+        '존재하지 않거나 비밀번호가 일치하지 않습니다'
+      );
     });
   });
 
