@@ -27,10 +27,10 @@ const envSchema = z.object({
   MAX_FILE_SIZE: z.string().default('5242880').transform(Number), // 5MB
   MAX_DOCUMENT_SIZE: z.string().default('10485760').transform(Number), // 10MB
 
-  // Google OAuth (선택사항 - 나중에 구현)
-  GOOGLE_CLIENT_ID: z.string().optional(),
-  GOOGLE_CLIENT_SECRET: z.string().optional(),
-  GOOGLE_CALLBACK_URL: z.string().optional(),
+  // Google OAuth (필수)
+  GOOGLE_CLIENT_ID: z.string(),
+  GOOGLE_CLIENT_SECRET: z.string(),
+  GOOGLE_CALLBACK_URL: z.string(),
 
   // Google Calendar (선택사항 - 나중에 구현)
   GOOGLE_CALENDAR_ID: z.string().optional(),
