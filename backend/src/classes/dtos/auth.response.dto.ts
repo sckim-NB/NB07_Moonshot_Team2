@@ -1,3 +1,12 @@
+export type UserResponse = {
+  id: string;
+  email: string;
+  name: string;
+  profileImage: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 export class UserResponseDto {
   id: string;
   email: string;
@@ -6,7 +15,7 @@ export class UserResponseDto {
   createdAt: Date;
   updatedAt: Date;
 
-  constructor(user: any) {
+  constructor(user: UserResponse) {
     this.id = user.id;
     this.email = user.email;
     this.name = user.name;
@@ -15,7 +24,7 @@ export class UserResponseDto {
     this.updatedAt = user.updatedAt;
   }
 
-  static fromArray(users: any[]): UserResponseDto[] {
+  static fromArray(users: UserResponse[]): UserResponseDto[] {
     return users.map((user) => new UserResponseDto(user));
   }
 }
