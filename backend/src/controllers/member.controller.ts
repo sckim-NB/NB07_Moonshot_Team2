@@ -2,25 +2,56 @@ import { RequestHandler } from 'express';
 import { InvalidRequestError, LoginRequiredError } from '../lib/errors.js';
 import { memberService } from '../services/member.service.js';
 
-type Params = { projectId: string };
+type ProjectParams = { projectId: string };
+type InvitationParams = { invitationId: string };
 
-export const getProjectMembers: RequestHandler = async (req, res) => {
-  const { projectId } = req.params as Params;
+// 요청자 ID 추출 및 검증
+const getRequesterId = (req: unknown): string => {
+  
+  const user = (req as { user?: unknown }).user;
+  if (!user || typeof user !== 'object' || !('id' in user)) {
+    throw new LoginRequiredError();
+  }
 
-  const page = req.query.page ? Number(req.query.page) : 1;
-  const limit = req.query.limit ? Number(req.query.limit) : 10;
+  const id = (user as { id: unknown }).id;
+  if (typeof id !== 'string' || !id) {
+    throw new LoginRequiredError();
+  }
 
-  if (Number.isNaN(page) || Number.isNaN(limit) || page < 1 || limit < 1) {
+  return id;
+};
+
+// 페이지네이션 파싱 및 검증
+const parsePagination = (pageRaw: unknown, limitRaw: unknown) => {
+  const page = pageRaw ? Number(pageRaw) : 1;
+  const limit = limitRaw ? Number(limitRaw) : 10;
+
+  if (!Number.isInteger(page) || !Number.isInteger(limit) || page < 1 || limit < 1) {
     throw new InvalidRequestError();
   }
 
-const user = (req as { user?: unknown }).user;
+  return { page, limit };
+};
 
-if (!user || typeof user !== 'object' || !('id' in user)) {
-  throw new LoginRequiredError();
-}
+// 이메일 검증
+const validateEmail = (email: unknown): string => {
+  if (typeof email !== 'string') throw new InvalidRequestError();
 
-const requesterId = (user as { id: string }).id;
+  const trimmed = email.trim().toLowerCase();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(trimmed)) throw new InvalidRequestError();
+
+  return trimmed;
+};
+
+// 멤버 목록 조회
+export const getProjectMembers: RequestHandler = async (req, res) => {
+  const { projectId } = req.params as ProjectParams;
+  if (!projectId) throw new InvalidRequestError();
+
+  const { page, limit } = parsePagination(req.query.page, req.query.limit);
+  const requesterId = getRequesterId(req);
 
   const result = await memberService.getProjectMembers({
     projectId,
@@ -30,4 +61,33 @@ const requesterId = (user as { id: string }).id;
   });
 
   res.status(200).json(result);
+};
+
+// 멤버 초대
+export const inviteProjectMember: RequestHandler = async (req, res) => {
+  const { projectId } = req.params as ProjectParams;
+  if (!projectId) throw new InvalidRequestError();
+
+  const email = validateEmail(req.body?.email);
+  const requesterId = getRequesterId(req);
+
+  const { invitationId } = await memberService.inviteProjectMember({
+    projectId,
+    requesterId,
+    email,
+  });
+
+  res.status(201).json({ invitationId });
+};
+
+// 초대 취소
+export const removeInvitation: RequestHandler = async (req, res) => {
+  const { invitationId } = req.params as InvitationParams;
+  if (!invitationId) throw new InvalidRequestError();
+
+  const requesterId = getRequesterId(req);
+
+  await memberService.removeInvitation({ invitationId, requesterId });
+
+  res.status(204).send();
 };
