@@ -13,9 +13,7 @@ import {
   type MemberListResponseDto,
 } from '../dtos/member.dto.js';
 
-
 export const memberService = {
-  
   // 멤버 조회
   async getProjectMembers(input: {
     projectId: string;
@@ -42,9 +40,7 @@ export const memberService = {
 
     // accepted + pending 정렬
     const merged = [
-      ...accepted.map((m) =>
-        toAcceptedMemberDto(m, taskCountMap.get(m.user.id) ?? 0)
-    ),
+      ...accepted.map((m) => toAcceptedMemberDto(m, taskCountMap.get(m.user.id) ?? 0)),
       ...pending.map(toPendingInvitationDto),
     ];
 
@@ -70,7 +66,10 @@ export const memberService = {
     if (targetUser.id === requesterId) throw new InvalidRequestError();
 
     // 멤버 여부 확인
-    const alreadyMember = await memberRepository.existsAcceptedMemberByUserId(projectId, targetUser.id);
+    const alreadyMember = await memberRepository.existsAcceptedMemberByUserId(
+      projectId,
+      targetUser.id
+    );
     if (alreadyMember) throw new BadRequestError('이미 프로젝트 멤버입니다');
 
     // 중복 초대 x

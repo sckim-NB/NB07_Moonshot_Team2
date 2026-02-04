@@ -24,7 +24,10 @@ export const mapMemberStatus = (s: InviteStatus): MemberListItemDto['status'] =>
 
 // ACCEPTED 멤버
 export const toAcceptedMemberDto = (
-  m: { user: { id: string; name: string; email: string; profileImage: string | null }; status: InviteStatus },
+  m: {
+    user: { id: string; name: string; email: string; profileImage: string | null };
+    status: InviteStatus;
+  },
   taskCount: number
 ): MemberListItemDto => ({
   id: m.user.id,

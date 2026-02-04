@@ -1,7 +1,6 @@
 import { prisma } from '../lib/db.js';
 
 export const memberRepository = {
-  
   // 참여 멤버 확인
   async isAcceptedProjectMember(projectId: string, userId: string) {
     const found = await prisma.projectMember.findFirst({
@@ -30,7 +29,6 @@ export const memberRepository = {
 
     const emails = invitations.map((i) => i.inviteeEmail);
     if (emails.length === 0) {
-
       return invitations.map((inv) => ({ ...inv, user: null }));
     }
 
@@ -48,28 +46,27 @@ export const memberRepository = {
 
   // 멤버별 task 개수 조회
   async getTaskCountsByAssigneeIds(projectId: string, assigneeIds: string[]) {
-  if (assigneeIds.length === 0) {
-    return new Map<string, number>();
-  }
+    if (assigneeIds.length === 0) {
+      return new Map<string, number>();
+    }
 
-  const rows = await prisma.task.groupBy({
-    by: ['assigneeId'],
-    where: {
-      projectId,
-      assigneeId: { in: assigneeIds },
-    },
-    _count: { _all: true },
-  });
+    const rows = await prisma.task.groupBy({
+      by: ['assigneeId'],
+      where: {
+        projectId,
+        assigneeId: { in: assigneeIds },
+      },
+      _count: { _all: true },
+    });
 
-  // assigneeId -> taskCount
-  const taskCountMap = new Map<string, number>();
-  rows.forEach((row) => {
-    taskCountMap.set(row.assigneeId, row._count._all);
-  });
+    // assigneeId -> taskCount
+    const taskCountMap = new Map<string, number>();
+    rows.forEach((row) => {
+      taskCountMap.set(row.assigneeId, row._count._all);
+    });
 
-  return taskCountMap;
-},
-
+    return taskCountMap;
+  },
 
   // 권한 확인 (오너)
   async isProjectOwner(projectId: string, userId: string) {
@@ -107,11 +104,7 @@ export const memberRepository = {
   },
 
   // 초대 생성
-  async createInvitation(input: {
-    projectId: string;
-    inviterId: string;
-    inviteeEmail: string;
-  }) {
+  async createInvitation(input: { projectId: string; inviterId: string; inviteeEmail: string }) {
     const created = await prisma.invitation.create({
       data: {
         projectId: input.projectId,

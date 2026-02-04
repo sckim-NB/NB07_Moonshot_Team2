@@ -7,7 +7,6 @@ type InvitationParams = { invitationId: string };
 
 // 요청자 ID 추출 및 검증
 const getRequesterId = (req: unknown): string => {
-  
   const user = (req as { user?: unknown }).user;
   if (!user || typeof user !== 'object' || !('id' in user)) {
     throw new LoginRequiredError();
