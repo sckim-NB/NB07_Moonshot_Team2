@@ -1,5 +1,39 @@
 import { Provider } from '@prisma/client';
 import { prisma } from '../lib/db.js';
+// #21 유저 내 정보 조회
+// model User {
+//   id            String          @id @default(cuid())
+//   email         String          @unique
+//   name          String
+//   password      String?
+//   profileImage  String?
+//   provider      Provider        @default(LOCAL)
+//   createdAt     DateTime        @default(now())
+//   updatedAt     DateTime        @updatedAt
+//   ownedProjects Project[]       @relation("ProjectOwner")
+//   memberships   ProjectMember[]
+//   tasks         Task[]          @relation("TaskAssignee")
+//   comments      Comment[]
+//   invitations   Invitation[]
+
+//   @@map("users")
+// }
+
+export class UserRepository {
+     async findById(id: string){
+          return await prisma.user.findUnique({
+               where:{ id },
+               select:{
+                    id: true,
+                    email: true,
+                    name: true,
+                    profileImage: true,
+                    createdAt: true,
+                    updatedAt: true
+               }
+          })
+     }
+}
 
 export const findByEmail = async (email: string) => {
   return await prisma.user.findUnique({
