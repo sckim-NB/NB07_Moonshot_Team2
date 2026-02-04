@@ -51,7 +51,18 @@ async function main() {
     },
   });
 
-  console.log('✅ Created 3 users');
+  // 테스트 유저 생성 (비밀번호: test1234)
+  const testUserPassword = await bcrypt.hash('test1234', 10);
+  const testUser = await prisma.user.create({
+    data: {
+      email: 'test@example.com',
+      name: 'Test User',
+      password: testUserPassword,
+      profileImage: 'https://i.pravatar.cc/150?img=99',
+    },
+  });
+
+  console.log('✅ Created 4 users (including test user)');
 
   // 2. 프로젝트 생성
   const project1 = await prisma.project.create({
