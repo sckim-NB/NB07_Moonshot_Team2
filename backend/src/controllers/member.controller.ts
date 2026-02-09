@@ -4,6 +4,7 @@ import { memberService } from '../services/member.service.js';
 
 type ProjectParams = { projectId: string };
 type InvitationParams = { invitationId: string };
+type ProjectUserParams = { projectId: string; userId: string };
 
 // 요청자 ID 추출 및 검증
 const getRequesterId = (req: unknown): string => {
@@ -87,6 +88,30 @@ export const removeInvitation: RequestHandler = async (req, res) => {
   const requesterId = getRequesterId(req);
 
   await memberService.removeInvitation({ invitationId, requesterId });
+
+  res.status(204).send();
+};
+
+// 초대 수락
+export const acceptInvitation: RequestHandler = async (req, res) => {
+  const { invitationId } = req.params as InvitationParams;
+  if (!invitationId) throw new InvalidRequestError();
+
+  const requesterId = getRequesterId(req);
+
+  await memberService.acceptInvitation({ invitationId, requesterId });
+
+  res.status(200).send();
+};
+
+// 멤버 제외
+export const removeProjectMember: RequestHandler = async (req, res) => {
+  const { projectId, userId } = req.params as ProjectUserParams;
+  if (!projectId || !userId) throw new InvalidRequestError();
+
+  const requesterId = getRequesterId(req);
+
+  await memberService.removeProjectMember({ projectId, requesterId, userId });
 
   res.status(204).send();
 };

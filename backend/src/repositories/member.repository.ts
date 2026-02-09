@@ -87,11 +87,7 @@ export const memberRepository = {
 
   // 멤버 체크
   async existsAcceptedMemberByUserId(projectId: string, userId: string) {
-    const found = await prisma.projectMember.findFirst({
-      where: { projectId, userId, status: 'ACCEPTED' },
-      select: { id: true },
-    });
-    return Boolean(found);
+    return this.isAcceptedProjectMember(projectId, userId);
   },
 
   // 중복 초대 x
@@ -134,5 +130,78 @@ export const memberRepository = {
   // 초대 취소
   async deleteInvitation(invitationId: string) {
     await prisma.invitation.delete({ where: { id: invitationId } });
+  },
+
+  // 초대 조회
+  async findInvitationById(invitationId: string) {
+    return prisma.invitation.findUnique({
+      where: { id: invitationId },
+      select: {
+        id: true,
+        projectId: true,
+        inviteeEmail: true,
+        status: true,
+        expiresAt: true,
+      },
+    });
+  },
+
+  // 수락 요청자 이메일 조회
+  async findRequesterEmailById(userId: string) {
+    return prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true },
+    });
+  },
+
+  // 중복 수락 요청 x
+  async findProjectMember(projectId: string, userId: string) {
+    return prisma.projectMember.findUnique({
+      where: { projectId_userId: { projectId, userId } },
+      select: {
+        id: true,
+        projectId: true,
+        userId: true,
+        role: true,
+        status: true,
+      },
+    });
+  },
+
+  // 초대 상태 업데이트
+  async markInvitationAcceptedIfPending(invitationId: string) {
+    return prisma.invitation.updateMany({
+      where: { id: invitationId, status: 'PENDING' },
+      data: { status: 'ACCEPTED' },
+    });
+  },
+
+  // 멤버 생성
+  async createProjectMember(projectId: string, userId: string) {
+    return prisma.projectMember.create({
+      data: { projectId, userId },
+      select: {
+        id: true,
+        projectId: true,
+        userId: true,
+        role: true,
+        status: true,
+      },
+    });
+  },
+
+  // 담당자 제외시 해당 할일 삭제
+  async deleteTasksByAssigneeInProject(projectId: string, assigneeId: string) {
+    return prisma.task.deleteMany({
+      where: { projectId, assigneeId },
+    });
+  },
+
+  // 멤버 삭제
+  async deleteProjectMember(projectId: string, userId: string) {
+    return prisma.projectMember.delete({
+      where: { projectId_userId: { projectId, userId } },
+      select: { id: true },
+    });
   },
 };
