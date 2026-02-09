@@ -17,4 +17,16 @@ export class UserController {
       next(error);
     }
   };
+  updateMyInfo = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = (req.user as { id: string }).id; // express.d.ts 파일 확인필요
+      // 서비스 호출
+      const updatedUser = await this.userService.updateMyInfo(userId, req.body);
+
+      // 200 OK 응답
+      return res.status(200).json(updatedUser);
+    } catch (error) {
+      next(error); 
+    }
+  };
 }
