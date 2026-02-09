@@ -29,4 +29,15 @@ export class UserController {
       next(error); 
     }
   };
+  getUserProjects = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = (req.user as { id: string }).id;
+
+      // 2. 서비스 호출 (Pagination 및 정렬 조건 전달)
+      const result = await this.userService.getUserProjects(userId, req.query);
+      return res.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  };
 }

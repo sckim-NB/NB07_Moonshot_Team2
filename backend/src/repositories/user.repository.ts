@@ -1,9 +1,8 @@
-import { Provider } from '@prisma/client';
+import { Provider, Prisma } from '@prisma/client';
 import { prisma } from '../lib/db.js';
-// #21 유저 - 내 정보 조회
-// #22 유저 - 내 정보 수정
 
 export class UserRepository {
+    // #21 유저 - 내 정보 조회
      async findById(id: string){
           return await prisma.user.findUnique({
                where:{ id },
@@ -17,7 +16,7 @@ export class UserRepository {
                }
           })
      }
-     // 수정 - 유저 전체 정보 가져오기
+     // #22 유저 - 내 정보 수정
     async findRawById(id: string) {
     return await prisma.user.findUnique({ where: { id } });
     }
@@ -35,6 +34,42 @@ export class UserRepository {
       },
     });
 }
+      // #23 유저 - 참여 중인 프로젝트 조회
+    async findUserProjects(userId: string, params: {
+    skip: number;
+    take: number;
+    orderBy: Prisma.ProjectOrderByWithRelationInput;
+  }) {
+
+    const [projects, total] = await prisma.$transaction([
+      prisma.project.findMany({
+        where: {
+          members: { some: { userId } } //
+        },
+        skip: params.skip,
+        take: params.take,
+        orderBy: params.orderBy,
+        include: {
+          _count: {
+            select: {
+              members: true, // memberCount
+              tasks: true,   // 전체 태스크 (상태별 카운트를 위해 필요 시 가공)
+            }
+          },
+          // 상태별 개수는 Task 테이블의 status 필드를 기준으로 count 해야 합니다.
+          tasks: {
+            select: { status: true }
+          }
+        }
+      }),
+      prisma.project.count({
+        where: { members: { some: { userId } } }
+      })
+    ]);
+
+    return { projects, total };
+  }
+      // #24 유저 - 참여 중인 모든 프로젝트의 할 일 목록 조회
 }
 
 export const findByEmail = async (email: string) => {
