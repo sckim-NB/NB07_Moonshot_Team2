@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import { asyncHandler } from '../utils/asyncHandler.js';
+import { authenticate } from '../middleware/auth.middleware.js';
+
 import {
   getProjectMembers,
   inviteProjectMember,
@@ -9,6 +11,8 @@ import {
 } from '../controllers/member.controller.js';
 
 const router = Router();
+
+router.use(authenticate);
 
 router.get('/projects/:projectId/users', asyncHandler(getProjectMembers));
 router.post('/projects/:projectId/invitations', asyncHandler(inviteProjectMember));

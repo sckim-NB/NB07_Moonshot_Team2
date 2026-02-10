@@ -8,17 +8,13 @@ type ProjectUserParams = { projectId: string; userId: string };
 
 // 요청자 ID 추출 및 검증
 const getRequesterId = (req: unknown): string => {
-  const user = (req as { user?: unknown }).user;
-  if (!user || typeof user !== 'object' || !('id' in user)) {
+  const userId = (req as { userId?: unknown }).userId;
+
+  if (typeof userId !== 'string' || !userId) {
     throw new LoginRequiredError();
   }
 
-  const id = (user as { id: unknown }).id;
-  if (typeof id !== 'string' || !id) {
-    throw new LoginRequiredError();
-  }
-
-  return id;
+  return userId;
 };
 
 // 페이지네이션 파싱 및 검증
