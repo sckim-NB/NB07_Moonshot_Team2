@@ -5,6 +5,8 @@ import { errorMiddleware } from './middleware/error.middleware.js';
 import { env } from './lib/env.js';
 import authRouter from './routes/auth.router.js';
 
+import memberRouter from './routes/member.routes.js';
+
 const app = express();
 
 // CORS 설정
@@ -39,6 +41,7 @@ app.get('/health', (_req, res) => {
 // API Routes
 app.use('/auth', authRouter);
 // app.use('/files', fileRouter);
+app.use(memberRouter);
 
 // Error handler (마지막에 위치)
 app.use(errorMiddleware);
