@@ -4,9 +4,7 @@ import { CreatedProjectInput } from '../schemas/project.schema';
 import { projectRequestDto, projectUpdateDto } from '../classes/dtos/project.request.dto';
 import { projectResponseDto } from '../classes/dtos/project.response.dto';
 
-export async function createProject(
-  data: CreatedProjectInput & { ownerId: string }
-) {
+export async function createProject(data: CreatedProjectInput & { ownerId: string }) {
   const dto = new projectRequestDto(data);
   const ownerProjectCount = await projectRepository.projectOwnerCount(dto.ownerId);
   if (ownerProjectCount >= 5) {
@@ -51,12 +49,9 @@ export async function getProject(projectId: string) {
   });
 }
 
-export async function updateProject(
-  projectId: string,
-  data: CreatedProjectInput
-) {
+export async function updateProject(projectId: string, data: CreatedProjectInput) {
   const extingProject = await projectRepository.getProject(projectId);
-  
+
   if (!extingProject) {
     throw new InvalidDataFormatError();
   }
