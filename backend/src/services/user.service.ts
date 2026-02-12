@@ -1,7 +1,8 @@
 import bcrypt from "bcrypt";
 import { Prisma } from "@prisma/client";
+import { prisma } from '../lib/db.js';
 import { UserRepository } from "../repositories/user.repository";
-import { UserNotFoundError, InvalidRequestError, InvalidDataFormatError } from "../lib/errors";
+import { UserNotFoundError, InvalidRequestError, InvalidDataFormatError, InvalidCredentialsError } from "../lib/errors";
 
 interface ProjectWithCounts {
   id: string | number;
@@ -31,6 +32,11 @@ interface GetProjectsQuery {
   order_by?: 'name' | 'created_at';
 }
 
+interface GetTasksQuery {
+  page?: string;
+  limit?: string;
+  order?: 'asc' | 'desc';
+}
 export class UserService {
   private userRepository = new UserRepository();
 
@@ -46,8 +52,6 @@ export class UserService {
       throw new UserNotFoundError();
     }
     return user;
-     // 401 Unauthorized error { "message": "로그인이 필요합니다"}
-     // 401 Unauthorized error(토큰) { "message": "토큰 만료"}
   }
 
   // #22 내 정보 수정
@@ -74,14 +78,13 @@ export class UserService {
       }
 
       // 현재 비밀번호 일치 여부 (소셜 로그인 유저는 password가 null일 수)
-      if (!user.password) throw new InvalidRequestError(); 
+      if (!user.password) throw new InvalidCredentialsError; 
       
       const isMatchPassword = await bcrypt.compare(currentPassword, user.password);
       if (!isMatchPassword) {
         throw new InvalidRequestError(); // 비밀번호 불일치 시 400
       }
 
-      // 새 비밀번호
       updateData.password = await bcrypt.hash(newPassword, 10);
     }
     return await this.userRepository.update(userId, updateData);
@@ -92,6 +95,10 @@ export class UserService {
     const page = parseInt(query.page || '1');
     const limit = parseInt(query.limit || '10');
     const order = (query.order === 'asc' || query.order === 'desc') ? query.order : 'desc';
+
+    if (page < 1 || limit < 1 || limit > 100) {
+    throw new InvalidRequestError(); 
+  }
 
     let orderByField: keyof Prisma.ProjectOrderByWithRelationInput;
     switch (query.order_by) {
@@ -128,4 +135,58 @@ export class UserService {
 
     return { data, total };
   }
+  // #24 참여 중인 모든 프로젝트의 할 일 목록 조회
+  async getMyTasks(userId: string, query: GetTasksQuery) {
+  // 쿼리 스트링에서 페이지네이션 및 정렬 값 추출
+  const page = parseInt(query.page || '1');
+  const limit = parseInt(query.limit || '10');
+  const skip = (page - 1) * limit;
+  const order = query.order === 'asc' ? 'asc' : 'desc';
+
+  // 다중 관계 쿼리: Task -> Project -> ProjectMember -> User
+  const tasks = await prisma.task.findMany({
+    where: {
+      project: {
+        members: {
+          some: {
+             userId : userId  
+          }
+        }
+      }
+    },
+    include: {
+      project: {
+        select: {
+          id: true,
+          name: true 
+        }
+      }
+    },
+    skip,
+    take: limit,
+    orderBy: {
+      createdAt: order
+    }
+  });
+
+  const totalCount = await prisma.task.count({
+    where: {
+      project: {
+        members: {
+          some: { userId: userId }
+        }
+      }
+    }
+  });
+
+  return {
+    data: tasks,
+    meta: {
+      totalCount,
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+      limit
+    }
+  };
   }
+}
