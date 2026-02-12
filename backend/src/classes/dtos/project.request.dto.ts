@@ -9,11 +9,10 @@ export class projectRequestDto {
     this.ownerId = data.ownerId;
   }
 }
-
 export class projectUpdateDto {
-  name?: string | null;
+  name: string ;
   description?: string | null;
-  constructor(data: { name?: string | null; description?: string | null }) {
+  constructor(data: { name: string; description?: string | null }) {
     this.name = data.name;
     this.description = data.description;
   }
