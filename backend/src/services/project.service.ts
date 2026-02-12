@@ -1,5 +1,5 @@
 import * as projectRepository from '../repositories/project.repository';
-import { InvalidDataFormatError, NotProjectMemberError, NotProjectOwnerError } from '../lib/errors';
+import { InvalidRequestError, NotFoundError, NotProjectMemberError, NotProjectOwnerError } from '../lib/errors';
 import { CreatedProjectInput } from '../schemas/project.schema';
 import { projectRequestDto, projectUpdateDto } from '../classes/dtos/project.request.dto';
 import { projectResponseDto } from '../classes/dtos/project.response.dto';
@@ -8,7 +8,7 @@ export async function createProject(data: CreatedProjectInput & { ownerId: strin
   const dto = new projectRequestDto(data);
   const ownerProjectCount = await projectRepository.projectOwnerCount(dto.ownerId);
   if (ownerProjectCount >= 5) {
-    throw new Error('Project creation limit reached. You can create up to 5 projects.');
+    throw new InvalidRequestError();
   }
 
   const createdProject = await projectRepository.createProject({
@@ -29,12 +29,14 @@ export async function createProject(data: CreatedProjectInput & { ownerId: strin
 }
 
 export async function getProject(projectId: string) {
+  
+  const requesterId = ''; 
   const project = await projectRepository.getProject(projectId);
 
   if (!project) {
-    throw new InvalidDataFormatError();
+    throw new NotFoundError();
   }
-  if (project.ownerId !== projectId) {
+  if (project.ownerId === requesterId) {
     throw new NotProjectMemberError();
   }
 
@@ -50,13 +52,15 @@ export async function getProject(projectId: string) {
 }
 
 export async function updateProject(projectId: string, data: CreatedProjectInput) {
+  
+  const requesterId = ''; 
   const extingProject = await projectRepository.getProject(projectId);
 
   if (!extingProject) {
-    throw new InvalidDataFormatError();
+    throw new NotFoundError();
   }
 
-  if (extingProject.ownerId !== projectId) {
+  if (extingProject.ownerId === requesterId) {
     throw new NotProjectOwnerError();
   }
 
@@ -76,13 +80,15 @@ export async function updateProject(projectId: string, data: CreatedProjectInput
 }
 
 export async function deleteProject(projectId: string) {
+  
+  const requesterId = ''; 
   const exctingProject = await projectRepository.getProject(projectId);
 
   if (!exctingProject) {
-    throw new InvalidDataFormatError();
+    throw new NotFoundError();
   }
 
-  if (exctingProject.ownerId !== projectId) {
+  if (exctingProject.ownerId === requesterId) {
     throw new NotProjectOwnerError();
   }
 

@@ -53,7 +53,10 @@ export async function projectMemberCount(projectId: string) {
 
 export async function todoCount(projectId: string) {
   return await prisma.task.count({
-    where: { projectId },
+    where: { 
+      projectId: projectId, 
+      status: 'TODO',
+    },
   });
 }
 
