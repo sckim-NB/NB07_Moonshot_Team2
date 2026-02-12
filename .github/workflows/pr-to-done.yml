@@ -3,6 +3,9 @@ name: Move PR Issues to Done
 on:
   pull_request:
     types: [closed]
+    branches:
+      - develop
+      - main
 
 jobs:
   move-to-done:
