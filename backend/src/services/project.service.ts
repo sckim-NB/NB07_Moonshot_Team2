@@ -49,7 +49,7 @@ export async function getProject(projectId: string) {
   });
 }
 
-export async function updateProject(projectId: string, data: CreatedProjectInput){
+export async function updateProject(projectId: string, data: CreatedProjectInput) {
   const extingProject = await projectRepository.getProject(projectId);
 
   if (!extingProject) {

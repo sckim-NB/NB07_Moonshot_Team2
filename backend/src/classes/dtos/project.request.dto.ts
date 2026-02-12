@@ -10,7 +10,7 @@ export class projectRequestDto {
   }
 }
 export class projectUpdateDto {
-  name: string ;
+  name: string;
   description?: string | null;
   constructor(data: { name: string; description?: string | null }) {
     this.name = data.name;
