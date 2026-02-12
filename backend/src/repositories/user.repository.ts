@@ -2,29 +2,11 @@ import { Provider, Prisma } from '@prisma/client';
 import { prisma } from '../lib/db.js';
 
 export class UserRepository {
-    // #21 유저 - 내 정보 조회
-     async findById(id: string){
-          return await prisma.user.findUnique({
-               where:{ id },
-               select:{
-                    id: true,
-                    email: true,
-                    name: true,
-                    profileImage: true,
-                    createdAt: true,
-                    updatedAt: true
-               }
-          })
-     }
-     // #22 유저 - 내 정보 수정
-    async findRawById(id: string) {
-    return await prisma.user.findUnique({ where: { id } });
-    }
-     async update(id: string, data: { name?: string; password?: string; profileImage?: string | null }) {
-     return await prisma.user.update({
+  // #21 유저 - 내 정보 조회
+  async findById(id: string) {
+    return await prisma.user.findUnique({
       where: { id },
-      data,
-      select: { // 응답 명세에 맞는 필드만 선택
+      select: {
         id: true,
         email: true,
         name: true,
@@ -33,18 +15,41 @@ export class UserRepository {
         updatedAt: true,
       },
     });
-}
-      // #23 유저 - 참여 중인 프로젝트 조회
-    async findUserProjects(userId: string, params: {
-    skip: number;
-    take: number;
-    orderBy: Prisma.ProjectOrderByWithRelationInput;
-  }) {
-
+  }
+  // #22 유저 - 내 정보 수정
+  async findRawById(id: string) {
+    return await prisma.user.findUnique({ where: { id } });
+  }
+  async update(
+    id: string,
+    data: { name?: string; password?: string; profileImage?: string | null }
+  ) {
+    return await prisma.user.update({
+      where: { id },
+      data,
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        profileImage: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
+  // #23 유저 - 참여 중인 프로젝트 조회
+  async findUserProjects(
+    userId: string,
+    params: {
+      skip: number;
+      take: number;
+      orderBy: Prisma.ProjectOrderByWithRelationInput;
+    }
+  ) {
     const [projects, total] = await prisma.$transaction([
       prisma.project.findMany({
         where: {
-          members: { some: { userId } } //
+          members: { some: { userId } }, //
         },
         skip: params.skip,
         take: params.take,
@@ -53,23 +58,81 @@ export class UserRepository {
           _count: {
             select: {
               members: true, // memberCount
-              tasks: true,   // 전체 태스크 (상태별 카운트를 위해 필요 시 가공)
-            }
+              tasks: true, // 전체 태스크 (상태별 카운트를 위해 필요 시 가공)
+            },
           },
           // 상태별 개수는 Task 테이블의 status 필드를 기준으로 count 해야 합니다.
           tasks: {
-            select: { status: true }
-          }
-        }
+            select: { status: true },
+          },
+        },
       }),
       prisma.project.count({
-        where: { members: { some: { userId } } }
-      })
+        where: { members: { some: { userId } } },
+      }),
     ]);
 
     return { projects, total };
   }
-      // #24 유저 - 참여 중인 모든 프로젝트의 할 일 목록 조회
+  // #24 유저 - 참여 중인 모든 프로젝트의 할 일 목록 조회
+  async findUserTasks(
+    userId: string,
+    params: {
+      skip: number;
+      take: number;
+      order: 'asc' | 'desc';
+    }
+  ) {
+    const { skip, take, order } = params;
+
+    return await prisma.$transaction([
+      prisma.task.findMany({
+        where: {
+          project: {
+            members: {
+              some: { userId: userId },
+            },
+          },
+        },
+        include: {
+          project: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          assignee: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              profileImage: true,
+            },
+          },
+          taskTags: {
+            include: {
+              tag: true,
+            },
+          },
+          attachments: true,
+        },
+        skip,
+        take,
+        orderBy: {
+          createdAt: order,
+        },
+      }),
+      prisma.task.count({
+        where: {
+          project: {
+            members: {
+              some: { userId: userId },
+            },
+          },
+        },
+      }),
+    ]);
+  }
 }
 
 export const findByEmail = async (email: string) => {

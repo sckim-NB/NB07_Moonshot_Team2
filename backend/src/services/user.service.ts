@@ -1,9 +1,21 @@
-import bcrypt from "bcrypt";
-import { Prisma } from "@prisma/client";
-import { prisma } from '../lib/db.js';
-import { UserRepository } from "../repositories/user.repository";
-import { UserNotFoundError, InvalidRequestError, InvalidDataFormatError, InvalidCredentialsError } from "../lib/errors";
+import bcrypt from 'bcrypt';
+import { Prisma } from '@prisma/client';
+import { UserRepository } from '../repositories/user.repository';
+import {
+  UserNotFoundError,
+  InvalidRequestError,
+  InvalidDataFormatError,
+  InvalidCredentialsError,
+} from '../lib/errors';
+import { Task, Project, User, TaskTag, Tag, Attachment } from '@prisma/client';
 
+// 수정 필요
+type TaskWithDetails = Task & {
+  project: Pick<Project, 'id' | 'name'>;
+  assignee: Pick<User, 'id' | 'name' | 'email' | 'profileImage'> | null;
+  taskTags: (TaskTag & { tag: Tag })[];
+  attachments: Attachment[];
+};
 interface ProjectWithCounts {
   id: string | number;
   name: string;
@@ -17,7 +29,7 @@ interface ProjectWithCounts {
   tasks: { status: string }[];
 }
 
-// 유저 업데이트 DTO
+// 유저 업데이트 DTO - 최종 리팩토링 때 따로 파일에 저장
 interface UpdateUserDto {
   name?: string;
   currentPassword?: string;
@@ -43,12 +55,12 @@ export class UserService {
   // #21 내 정보 조회
   async getMyInfo(userId: string) {
     const user = await this.userRepository.findById(userId);
-     // 400 bad request error { "message": "잘못된 요청입니다"}
-     if (!userId) {
-      throw new InvalidRequestError(); 
+    // 400 bad request error { "message": "잘못된 요청입니다"}
+    if (!userId) {
+      throw new InvalidRequestError();
     }
-     // 404 Not Found error { "message": "존재하지 않는 유저입니다."}
-     if (!user) {
+    // 404 Not Found error { "message": "존재하지 않는 유저입니다."}
+    if (!user) {
       throw new UserNotFoundError();
     }
     return user;
@@ -62,7 +74,7 @@ export class UserService {
     const user = await this.userRepository.findRawById(userId);
     if (!user) throw new UserNotFoundError();
 
-    const updateData:  {
+    const updateData: {
       name?: string;
       password?: string;
       profileImage?: string | null;
@@ -78,8 +90,8 @@ export class UserService {
       }
 
       // 현재 비밀번호 일치 여부 (소셜 로그인 유저는 password가 null일 수)
-      if (!user.password) throw new InvalidCredentialsError; 
-      
+      if (!user.password) throw new InvalidCredentialsError();
+
       const isMatchPassword = await bcrypt.compare(currentPassword, user.password);
       if (!isMatchPassword) {
         throw new InvalidRequestError(); // 비밀번호 불일치 시 400
@@ -91,14 +103,14 @@ export class UserService {
   }
 
   // #23 참여 중인 프로젝트 조회
-    async getUserProjects(userId: string, query: GetProjectsQuery) {
+  async getUserProjects(userId: string, query: GetProjectsQuery) {
     const page = parseInt(query.page || '1');
     const limit = parseInt(query.limit || '10');
-    const order = (query.order === 'asc' || query.order === 'desc') ? query.order : 'desc';
+    const order = query.order === 'asc' || query.order === 'desc' ? query.order : 'desc';
 
     if (page < 1 || limit < 1 || limit > 100) {
-    throw new InvalidRequestError(); 
-  }
+      throw new InvalidRequestError();
+    }
 
     let orderByField: keyof Prisma.ProjectOrderByWithRelationInput;
     switch (query.order_by) {
@@ -117,7 +129,7 @@ export class UserService {
     const { projects, total } = await this.userRepository.findUserProjects(userId, {
       skip: (page - 1) * limit,
       take: limit,
-      orderBy: { [orderByField]: order }
+      orderBy: { [orderByField]: order },
     });
 
     // 데이터 가공
@@ -137,56 +149,49 @@ export class UserService {
   }
   // #24 참여 중인 모든 프로젝트의 할 일 목록 조회
   async getMyTasks(userId: string, query: GetTasksQuery) {
-  // 쿼리 스트링에서 페이지네이션 및 정렬 값 추출
-  const page = parseInt(query.page || '1');
-  const limit = parseInt(query.limit || '10');
-  const skip = (page - 1) * limit;
-  const order = query.order === 'asc' ? 'asc' : 'desc';
+    // 쿼리 스트링에서 페이지네이션 및 정렬 값 추출
+    const page = parseInt(query.page || '1');
+    const limit = parseInt(query.limit || '10');
+    const order = query.order === 'asc' ? 'asc' : 'desc';
 
-  // 다중 관계 쿼리: Task -> Project -> ProjectMember -> User
-  const tasks = await prisma.task.findMany({
-    where: {
-      project: {
-        members: {
-          some: {
-             userId : userId  
-          }
-        }
-      }
-    },
-    include: {
-      project: {
-        select: {
-          id: true,
-          name: true 
-        }
-      }
-    },
-    skip,
-    take: limit,
-    orderBy: {
-      createdAt: order
-    }
-  });
-
-  const totalCount = await prisma.task.count({
-    where: {
-      project: {
-        members: {
-          some: { userId: userId }
-        }
-      }
-    }
-  });
-
-  return {
-    data: tasks,
-    meta: {
-      totalCount,
-      totalPages: Math.ceil(totalCount / limit),
-      currentPage: page,
-      limit
-    }
-  };
+    // Task -> Project -> ProjectMember -> User
+    const [tasks, totalCount] = (await this.userRepository.findUserTasks(userId, {
+      skip: (page - 1) * limit,
+      take: limit,
+      order: order,
+    })) as [TaskWithDetails[], number];
+    const data = tasks.map((task: TaskWithDetails) => {
+      return {
+        id: task.id,
+        projectId: task.projectId,
+        title: task.title,
+        startYear: task.startYear,
+        startMonth: task.startMonth,
+        startDay: task.startDay,
+        endYear: task.endYear,
+        endMonth: task.endMonth,
+        endDay: task.endDay,
+        status: task.status.toLowerCase(),
+        assignee: task.assignee
+          ? {
+              id: task.assignee.id,
+              name: task.assignee.name,
+              email: task.assignee.email,
+              profileImage: task.assignee.profileImage,
+            }
+          : null,
+        tags: task.taskTags.map((tt) => ({
+          id: tt.tag.id,
+          name: tt.tag.name,
+        })),
+        attachments: task.attachments.map((a) => a.filepath),
+        createdAt: task.createdAt,
+        updatedAt: task.updatedAt,
+      };
+    });
+    return {
+      data,
+      total: totalCount,
+    };
   }
 }

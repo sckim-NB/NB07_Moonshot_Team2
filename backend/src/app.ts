@@ -47,6 +47,7 @@ app.use('/auth', authRouter);
 app.use(memberRouter);
 app.use('/projects', projectRouter);
 app.use("/users", userRouter);
+app.use('/users', userRouter);
 
 // Error handler (마지막에 위치)
 app.use(errorMiddleware);
