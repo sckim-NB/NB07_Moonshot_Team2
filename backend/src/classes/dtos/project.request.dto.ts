@@ -11,9 +11,9 @@ export class projectRequestDto {
 }
 
 export class projectUpdateDto {
-  name?: string | undefined;
+  name?: string | null;
   description?: string | null;
-  constructor(data: { name?: string | undefined; description?: string | null }) {
+  constructor(data: { name?: string | null; description?: string | null }) {
     this.name = data.name;
     this.description = data.description;
   }

@@ -8,11 +8,11 @@ import {
   deleteProject,
 } from '../controllers/project.controller';
 
-const projectsRouter = express.Router();
+const router = express.Router();
 
-projectsRouter.post('/', authenticate, asyncHandler(createProject));
-projectsRouter.get('/:projectId', authenticate, asyncHandler(getProject));
-projectsRouter.patch('/:projectId', authenticate, asyncHandler(updateProject));
-projectsRouter.delete('/:projectId', authenticate, asyncHandler(deleteProject));
+router.post('/', authenticate, asyncHandler(createProject));
+router.get('/:projectId', authenticate, asyncHandler(getProject));
+router.patch('/:projectId', authenticate, asyncHandler(updateProject));
+router.delete('/:projectId', authenticate, asyncHandler(deleteProject));
 
-export default projectsRouter;
+export default router;
