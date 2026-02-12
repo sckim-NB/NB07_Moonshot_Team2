@@ -7,6 +7,8 @@ import authRouter from './routes/auth.router.js';
 
 import memberRouter from './routes/member.routes.js';
 
+import projectRouter from './routes/project.router.js';
+
 const app = express();
 
 // CORS 설정
@@ -42,7 +44,7 @@ app.get('/health', (_req, res) => {
 app.use('/auth', authRouter);
 // app.use('/files', fileRouter);
 app.use(memberRouter);
-
+app.use('/projects', projectRouter);
 // Error handler (마지막에 위치)
 app.use(errorMiddleware);
 
