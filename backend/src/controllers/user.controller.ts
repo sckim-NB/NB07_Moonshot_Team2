@@ -18,7 +18,7 @@ export class UserController {
       const userInfo = await this.userService.getMyInfo(userId);
       return res.status(200).json(userInfo);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   };
 
@@ -30,7 +30,7 @@ export class UserController {
       const updatedUser = await this.userService.updateMyInfo(userId, req.body);
       return res.status(200).json(updatedUser);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   };
 
@@ -42,7 +42,7 @@ export class UserController {
       const result = await this.userService.getUserProjects(userId, req.query);
       return res.status(200).json(result);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   };
   getMyTasks = async (req: Request, res: Response, next: NextFunction) => {
@@ -53,7 +53,7 @@ export class UserController {
       const result = await this.userService.getMyTasks(userId, req.query);
       return res.status(200).json(result);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   };
 
