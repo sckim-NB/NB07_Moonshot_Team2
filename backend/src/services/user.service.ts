@@ -89,12 +89,11 @@ export class UserService {
         throw new InvalidDataFormatError();
       }
 
-      // 현재 비밀번호 일치 여부 (소셜 로그인 유저는 password가 null일 수)
       if (!user.password) throw new InvalidRequestError();
 
       const isMatchPassword = await bcrypt.compare(currentPassword, user.password);
       if (!isMatchPassword) {
-        throw new InvalidCredentialsError(); // 비밀번호 불일치 시 400
+        throw new InvalidCredentialsError(); // 비밀번호 불일치 시 404
       }
 
       updateData.password = await bcrypt.hash(newPassword, 10);
@@ -147,12 +146,10 @@ export class UserService {
   }
   // #24 참여 중인 모든 프로젝트의 할 일 목록 조회
   async getMyTasks(userId: string, query: GetTasksQuery) {
-    // 쿼리 스트링에서 페이지네이션 및 정렬 값 추출
     const page = parseInt(query.page || '1');
     const limit = parseInt(query.limit || '10');
     const order = query.order === 'asc' ? 'asc' : 'desc';
 
-    // Task -> Project -> ProjectMember -> User
     const [tasks, totalCount] = (await this.userRepository.findUserTasks(userId, {
       skip: (page - 1) * limit,
       take: limit,
