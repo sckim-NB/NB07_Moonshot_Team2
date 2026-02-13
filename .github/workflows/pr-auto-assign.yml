@@ -15,8 +15,7 @@ jobs:
       - name: Add PR to Project
         uses: actions/add-to-project@v1.0.1
         with:
-          project-url: https://github.com/nb07-Moonshot-Team2/NB07_Moonshot_Team2.git
-          # 권한이 있는 토큰이 필요합니다 (아래 설명 참고)
+          project-url: https://github.com/orgs/nb07-Moonshot-Team2/projects/1
           github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
       - name: Set Assignee, Reviewers, and Labels
         uses: actions/github-script@v7
