@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import { errorMiddleware } from './middleware/error.middleware.js';
 import { env } from './lib/env.js';
 import authRouter from './routes/auth.router.js';
+import userRouter from './routes/user.router.js';
 
 import memberRouter from './routes/member.routes.js';
 
@@ -45,6 +46,8 @@ app.use('/auth', authRouter);
 // app.use('/files', fileRouter);
 app.use(memberRouter);
 app.use('/projects', projectRouter);
+app.use('/users', userRouter);
+
 // Error handler (마지막에 위치)
 app.use(errorMiddleware);
 
