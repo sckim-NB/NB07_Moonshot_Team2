@@ -7,7 +7,13 @@ import {
   InvalidDataFormatError,
   InvalidCredentialsError,
 } from '../lib/errors';
-import { UpdateUserDto,GetProjectsQuery,GetTasksQuery,TaskWithDetails,ProjectWithCounts } from '../dtos/user.dto';
+import {
+  UpdateUserDto,
+  GetProjectsQuery,
+  GetTasksQuery,
+  TaskWithDetails,
+  ProjectWithCounts,
+} from '../dtos/user.dto';
 export class UserService {
   private userRepository = new UserRepository();
 
