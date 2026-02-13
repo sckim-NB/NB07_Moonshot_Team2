@@ -9,7 +9,6 @@ import {
 } from '../lib/errors';
 import { Task, Project, User, TaskTag, Tag, Attachment } from '@prisma/client';
 
-// 수정 필요
 type TaskWithDetails = Task & {
   project: Pick<Project, 'id' | 'name'>;
   assignee: Pick<User, 'id' | 'name' | 'email' | 'profileImage'> | null;
@@ -29,7 +28,6 @@ interface ProjectWithCounts {
   tasks: { status: string }[];
 }
 
-// 유저 업데이트 DTO - 최종 리팩토링 때 따로 파일에 저장
 interface UpdateUserDto {
   name?: string;
   currentPassword?: string;
@@ -55,11 +53,11 @@ export class UserService {
   // #21 내 정보 조회
   async getMyInfo(userId: string) {
     const user = await this.userRepository.findById(userId);
-    // 400 bad request error { "message": "잘못된 요청입니다"}
+
     if (!userId) {
       throw new InvalidRequestError();
     }
-    // 404 Not Found error { "message": "존재하지 않는 유저입니다."}
+
     if (!user) {
       throw new UserNotFoundError();
     }
@@ -70,7 +68,6 @@ export class UserService {
   async updateMyInfo(userId: string, body: UpdateUserDto) {
     const { name, currentPassword, newPassword, profileImage } = body;
 
-    // 유저 존재 검증
     const user = await this.userRepository.findRawById(userId);
     if (!user) throw new UserNotFoundError();
 
@@ -83,7 +80,6 @@ export class UserService {
     if (name) updateData.name = name;
     if (profileImage !== undefined) updateData.profileImage = profileImage;
 
-    // 비밀번호 변경 - 검증 ( 400, 401 error - 401 error는 미들웨어에서)
     if (currentPassword || newPassword) {
       if (!currentPassword || !newPassword) {
         throw new InvalidDataFormatError();
@@ -93,7 +89,7 @@ export class UserService {
 
       const isMatchPassword = await bcrypt.compare(currentPassword, user.password);
       if (!isMatchPassword) {
-        throw new InvalidCredentialsError(); // 비밀번호 불일치 시 404
+        throw new InvalidCredentialsError();
       }
 
       updateData.password = await bcrypt.hash(newPassword, 10);
@@ -129,7 +125,6 @@ export class UserService {
       orderBy: { [orderByField]: order },
     });
 
-    // 데이터 가공
     const data = (projects as ProjectWithCounts[]).map((p) => ({
       id: p.id,
       name: p.name,
@@ -144,6 +139,7 @@ export class UserService {
 
     return { data, total };
   }
+
   // #24 참여 중인 모든 프로젝트의 할 일 목록 조회
   async getMyTasks(userId: string, query: GetTasksQuery) {
     const page = parseInt(query.page || '1');

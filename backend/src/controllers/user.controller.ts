@@ -7,7 +7,6 @@ export class UserController {
   // #21 내 정보 조회
   getMyInfo = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // 2. req를 RequestWithUser로 타입 단언 (any 사용 안 함)
       const userId = req.user!.id;
       const userInfo = await this.userService.getMyInfo(userId);
 
