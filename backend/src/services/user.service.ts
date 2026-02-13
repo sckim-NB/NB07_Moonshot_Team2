@@ -90,11 +90,11 @@ export class UserService {
       }
 
       // 현재 비밀번호 일치 여부 (소셜 로그인 유저는 password가 null일 수)
-      if (!user.password) throw new InvalidCredentialsError();
+      if (!user.password) throw new InvalidRequestError();
 
       const isMatchPassword = await bcrypt.compare(currentPassword, user.password);
       if (!isMatchPassword) {
-        throw new InvalidRequestError(); // 비밀번호 불일치 시 400
+        throw new InvalidCredentialsError(); // 비밀번호 불일치 시 400
       }
 
       updateData.password = await bcrypt.hash(newPassword, 10);
@@ -123,8 +123,6 @@ export class UserService {
       default:
         orderByField = 'createdAt';
     }
-
-    if (page < 1 || limit < 1) throw new InvalidRequestError(); // 400
 
     const { projects, total } = await this.userRepository.findUserProjects(userId, {
       skip: (page - 1) * limit,

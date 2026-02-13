@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import { UserController } from '../controllers/user.controller';
-import { authenticate } from '../middleware/auth.middleware'; // 인증 미들웨어 임포트
+import { authenticate } from '../middleware/auth.middleware'; 
 
 const userRouter = Router();
 const userController = new UserController();
 
+// #21 내 정보 조회
 userRouter.get('/me', authenticate, userController.getMyInfo);
 
 // #22 내 정보 수정
