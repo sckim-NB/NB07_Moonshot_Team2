@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { LoginRequiredError, TokenExpiredError } from '../lib/errors.js';
 import { verifyAccessToken } from '../lib/jwt.js';
+import { User } from '@prisma/client';
 
 export const authenticate = (req: Request, _res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
@@ -24,7 +25,9 @@ export const authenticate = (req: Request, _res: Response, next: NextFunction) =
   }
 
   // req.userId 설정
-  req.userId = result.payload!.userId;
+  req.user = {
+    id: result.payload!.userId,
+  } as User;
 
   next();
 };
