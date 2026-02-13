@@ -2,7 +2,6 @@ import { Provider, Prisma } from '@prisma/client';
 import { prisma } from '../lib/db.js';
 
 export class UserRepository {
-
   // #21 유저 - 내 정보 조회
   async findById(id: string) {
     return await prisma.user.findUnique({
@@ -60,11 +59,11 @@ export class UserRepository {
         include: {
           _count: {
             select: {
-              members: true, 
-              tasks: true, 
+              members: true,
+              tasks: true,
             },
           },
-          
+
           tasks: {
             select: { status: true },
           },
@@ -77,7 +76,7 @@ export class UserRepository {
 
     return { projects, total };
   }
-  
+
   // #24 유저 - 참여 중인 모든 프로젝트의 할 일 목록 조회
   async findUserTasks(
     userId: string,

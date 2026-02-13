@@ -89,7 +89,7 @@ export class UserService {
 
       const isMatchPassword = await bcrypt.compare(currentPassword, user.password);
       if (!isMatchPassword) {
-        throw new InvalidCredentialsError(); 
+        throw new InvalidCredentialsError();
       }
 
       updateData.password = await bcrypt.hash(newPassword, 10);
