@@ -7,46 +7,13 @@ import {
   InvalidDataFormatError,
   InvalidCredentialsError,
 } from '../lib/errors';
-import { Task, Project, User, TaskTag, Tag, Attachment } from '@prisma/client';
-
-type TaskWithDetails = Task & {
-  project: Pick<Project, 'id' | 'name'>;
-  assignee: Pick<User, 'id' | 'name' | 'email' | 'profileImage'> | null;
-  taskTags: (TaskTag & { tag: Tag })[];
-  attachments: Attachment[];
-};
-interface ProjectWithCounts {
-  id: string | number;
-  name: string;
-  description: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  _count: {
-    members: number;
-    tasks: number;
-  };
-  tasks: { status: string }[];
-}
-
-interface UpdateUserDto {
-  name?: string;
-  currentPassword?: string;
-  newPassword?: string;
-  profileImage?: string | null;
-}
-
-interface GetProjectsQuery {
-  page?: string;
-  limit?: string;
-  order?: 'asc' | 'desc';
-  order_by?: 'name' | 'created_at';
-}
-
-interface GetTasksQuery {
-  page?: string;
-  limit?: string;
-  order?: 'asc' | 'desc';
-}
+import {
+  UpdateUserDto,
+  GetProjectsQuery,
+  GetTasksQuery,
+  TaskWithDetails,
+  ProjectWithCounts,
+} from '../dtos/user.dto';
 export class UserService {
   private userRepository = new UserRepository();
 
