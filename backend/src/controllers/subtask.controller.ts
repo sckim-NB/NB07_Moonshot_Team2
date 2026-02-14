@@ -3,6 +3,7 @@ import { InvalidRequestError, LoginRequiredError } from '../lib/errors.js';
 import { subtaskService } from '../services/subtask.service.js';
 
 type TaskParams = { taskId: string };
+type SubtaskParams = { subtaskId: string };
 
 // 요청자 ID 추출 및 검증
 const getRequesterId = (req: unknown): string => {
@@ -46,6 +47,18 @@ export const getSubtasksByTask: RequestHandler = async (req, res) => {
   const requesterId = getRequesterId(req);
 
   const result = await subtaskService.getSubtasks({ taskId, requesterId });
+
+  res.status(200).json(result);
+};
+
+// subtask 조회
+export const getSubtaskById: RequestHandler = async (req, res) => {
+  const { subtaskId } = req.params as SubtaskParams;
+  if (!subtaskId) throw new InvalidRequestError();
+
+  const requesterId = getRequesterId(req);
+
+  const result = await subtaskService.getSubtask({ subtaskId, requesterId });
 
   res.status(200).json(result);
 };

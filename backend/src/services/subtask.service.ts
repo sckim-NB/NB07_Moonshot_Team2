@@ -66,6 +66,37 @@ export const subtaskService = {
    
   },
 
+  // subtask 조회
+  async getSubtask(input: {
+    subtaskId: string;
+    requesterId: string;
+  }): Promise<SubtaskResponseDto> {
+    const { subtaskId, requesterId } = input;
+
+    // subtask 조회
+    const subtask = await subtaskRepository.findSubtaskById(subtaskId);
+    if (!subtask) {
+      throw new NotFoundError('요청을 확인할 수 없습니다');
+    }
+
+    // subtask가 속한 task 조회
+    const task = await subtaskRepository.findTaskProjectId(subtask.taskId);
+    if (!task) {
+      throw new NotFoundError('요청을 확인할 수 없습니다');
+    }
+
+    // 권한 확인 (멤버)
+    const isMember = await subtaskRepository.isAcceptedProjectMember(
+      task.projectId,
+      requesterId
+    );
+    if (!isMember) {
+      throw new NotProjectMemberError();
+    }
+
+    // 응답 DTO 변환
+    return toSubtaskResponseDto(subtask);
+  },
 
   
 };

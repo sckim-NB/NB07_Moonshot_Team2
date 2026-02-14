@@ -66,7 +66,21 @@ export const subtaskRepository = {
     });
   },
 
-
+  // subtask 조회
+  async findSubtaskById(subtaskId: string) {
+    return prisma.subtask.findUnique({
+      where: { id: subtaskId },
+      select: {
+        id: true,
+        taskId: true,
+        title: true,
+        status: true,
+        order: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  },
 
 
 
