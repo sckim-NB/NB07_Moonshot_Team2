@@ -82,6 +82,31 @@ export const subtaskRepository = {
     });
   },
 
+    // subtask 수정
+  async updateSubtask(
+    subtaskId: string,
+    data: { title?: string; status?: 'TODO' | 'IN_PROGRESS' | 'DONE' }
+  ) {
+    return prisma.subtask.update({
+      where: { id: subtaskId },
+      data,
+      select: {
+        id: true,
+        taskId: true,
+        title: true,
+        status: true,
+        order: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  },
 
-
+  // subtask 삭제
+  async deleteSubtask(subtaskId: string) {
+    return prisma.subtask.delete({
+      where: { id: subtaskId },
+      select: { id: true },
+    });
+  },
 };
