@@ -57,7 +57,7 @@ export async function createTask(data: CreatedTaskInput) {
       id: taskTag.tag.id,
       name: taskTag.tag.name,
     })),
-    attachments: (createdTask.attachments ?? []).map((att) => att.url),
+    attachments: (createdTask.attachments ?? []).map((att) => att.filepath),
     createdAt: createdTask.createdAt,
     updatedAt: createdTask.updatedAt,
   });
@@ -119,7 +119,7 @@ export async function listTask(params: {
           id: taskTag.tag.id,
           name: taskTag.tag.name,
         })),
-        attachments: (task.attachments ?? []).map((att) => att.url),
+        attachments: (task.attachments ?? []).map((att) => att.filepath),
         createdAt: task.createdAt,
         updatedAt: task.updatedAt,
       })
@@ -167,7 +167,7 @@ export async function getTask(taskId: string) {
         }
       : null,
     tags: (task.taskTags ?? []).map((taskTag) => ({ id: taskTag.tag.id, name: taskTag.tag.name })),
-    attachments: (task.attachments ?? []).map((att) => att.url),
+    attachments: (task.attachments ?? []).map((att) => att.filepath),
     createdAt: task.createdAt,
     updatedAt: task.updatedAt,
   });
@@ -226,7 +226,7 @@ export async function updateTask(taskId: string, data: Partial<TaskUpdateRequest
       id: taskTag.tag.id,
       name: taskTag.tag.name,
     })),
-    attachments: (updatedTask.attachments ?? []).map((att) => att.url),
+    attachments: (updatedTask.attachments ?? []).map((att) => att.filepath),
     createdAt: updatedTask.createdAt,
     updatedAt: updatedTask.updatedAt,
   });

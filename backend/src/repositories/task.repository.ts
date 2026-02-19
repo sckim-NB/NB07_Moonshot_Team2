@@ -49,6 +49,14 @@ export async function createTask(data: {
 
   return await prisma.task.create({
     data: createData,
+    include: {
+      taskTags: {
+        include: {
+          tag: true,
+        },
+      },
+      attachments: true,
+    },
   });
 }
 
@@ -240,6 +248,14 @@ export async function updateTask(
   return await prisma.task.update({
     where: { id: taskId },
     data: updateData,
+    include: {
+      taskTags: {
+        include: {
+          tag: true,
+        },
+      },
+      attachments: true,
+    },
   });
 }
 
