@@ -1,13 +1,13 @@
 export class CommentResponseDto {
   id!: string;
   content!: string;
+  taskId!: string;
   auther!: {
     id: string;
     name: string;
     email: string;
     profileImage: string;
   };
-  taskId!: string;
   createdAt!: Date;
   updatedAt!: Date;
 

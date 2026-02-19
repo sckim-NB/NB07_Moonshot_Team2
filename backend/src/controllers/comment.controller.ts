@@ -6,7 +6,7 @@ export async function createComment(req: Request, res: Response) {
   // Implementation for creating a comment
   const validatedData = createdCommentSchema.parse(req.body);
   const newComment = await commentService.createComment(validatedData);
-  res.status(201).json(newComment);
+  res.status(200).json(newComment);
 }
 
 export async function listComments(req: Request, res: Response) {

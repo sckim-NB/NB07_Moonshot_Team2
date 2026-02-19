@@ -5,14 +5,14 @@ import { createdTaskSchema } from '../schemas/task.schema';
 export async function createTask(req: Request, res: Response) {
   const validatedData = createdTaskSchema.parse(req.body);
   const newTask = await taskService.createTask(validatedData);
-  res.status(201).send(newTask);
+  res.status(200).send(newTask);
 }
 
 export async function listTasks(req: Request, res: Response) {
   const { projectId } = req.params;
   const { status, assignee, tags, page, limit, keyword } = req.query;
 
-  const tasks = await taskService.listTask({
+  const { data: tasks, total } = await taskService.listTask({
     projectId: projectId as string,
     status: status as 'todo' | 'in_progress' | 'done' | undefined,
     assignee: assignee as string | undefined,
@@ -22,7 +22,7 @@ export async function listTasks(req: Request, res: Response) {
     keyword: keyword as string | undefined,
   });
 
-  res.status(200).send(tasks);
+  res.status(200).send({ data: tasks, total });
 }
 
 export async function getTask(req: Request, res: Response) {
