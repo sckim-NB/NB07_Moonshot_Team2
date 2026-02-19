@@ -7,6 +7,8 @@ import authRouter from './routes/auth.router.js';
 import userRouter from './routes/user.router.js';
 import memberRouter from './routes/member.routes.js';
 import projectRouter from './routes/project.router.js';
+import taskRouter from './routes/task.router.js';
+import commentRouter from './routes/comment.router.js';
 import fileRouter from './routes/file.router.js';
 import path from 'path';
 
@@ -47,6 +49,8 @@ app.use('/files', fileRouter);
 app.use(memberRouter);
 app.use('/projects', projectRouter);
 app.use('/users', userRouter);
+app.use(taskRouter);
+app.use(commentRouter);
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Error handler (마지막에 위치)
