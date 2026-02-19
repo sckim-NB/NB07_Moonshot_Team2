@@ -2,7 +2,7 @@ name: PR Auto Assign
 
 on:
   pull_request:
-    types: [opened, reopened]
+    types: [opened, reopened, synchronize]
 
 jobs:
   auto-assign:
@@ -12,6 +12,11 @@ jobs:
       contents: read
     
     steps:
+      - name: Add PR to Project
+        uses: actions/add-to-project@v1.0.1
+        with:
+          project-url: https://github.com/orgs/nb07-Moonshot-Team2/projects/1
+          github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
       - name: Set Assignee, Reviewers, and Labels
         uses: actions/github-script@v7
         with:
