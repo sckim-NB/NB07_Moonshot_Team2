@@ -14,6 +14,17 @@ export async function createProject(data: {
   });
 }
 
+export async function addProjectMember(projectId: string, userId: string, role: 'OWNER' | 'MEMBER') {
+  return await prisma.projectMember.create({
+    data: {
+      projectId,
+      userId,
+      role,
+      status: 'ACCEPTED', 
+    },
+  });
+}
+
 export async function getProject(projectId: string) {
   return await prisma.project.findUnique({
     where: { id: projectId },

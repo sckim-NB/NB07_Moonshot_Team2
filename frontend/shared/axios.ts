@@ -1,10 +1,11 @@
 import * as Axios from 'axios';
 import { getAccessToken, refreshTokens } from './auth';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 export const axios = Axios.default.create({
   baseURL: BASE_URL,
+  withCredentials: true,
 });
 
 axios.interceptors.request.use(async (config) => {

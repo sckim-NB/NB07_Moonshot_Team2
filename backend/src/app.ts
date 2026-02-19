@@ -18,7 +18,12 @@ const app = express();
 // CORS 설정
 app.use(
   cors({
-    origin: env.FRONTEND_URL || 'http://localhost:5173',
+    origin: [
+      env.FRONTEND_URL, 
+      'http://localhost:3001', 
+      'http://localhost:3000',
+      'http://localhost:5173'
+    ].filter(Boolean),
     credentials: true,
   })
 );
