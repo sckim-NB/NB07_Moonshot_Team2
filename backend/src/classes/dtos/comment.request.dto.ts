@@ -10,8 +10,8 @@ export class CommentRequestDto {
 }
 
 export class CommentUpdateRequestDto {
-  content: string;
-  constructor(data: { content: string }) {
+  content?: string | undefined;
+  constructor(data: { content?: string | undefined }) {
     this.content = data.content;
   }
 }
