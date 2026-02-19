@@ -1,8 +1,4 @@
-import {
-  InvalidRequestError,
-  NotFoundError,
-  NotProjectMemberError,
-} from '../lib/errors.js';
+import { InvalidRequestError, NotFoundError, NotProjectMemberError } from '../lib/errors.js';
 import { subtaskRepository } from '../repositories/subtask.repository.js';
 import {
   toDbSubtaskStatus,
@@ -12,7 +8,6 @@ import {
 } from '../dtos/subtask.dto.js';
 
 export const subtaskService = {
-
   // 하위 할 일 생성
   async createSubtask(input: {
     taskId: string;
@@ -23,14 +18,14 @@ export const subtaskService = {
 
     // title 검증
     if (typeof input.title !== 'string') throw new InvalidRequestError();
-    
+
     const title = input.title.trim();
     if (!title) throw new InvalidRequestError();
 
     // 할 일 조회
     const task = await subtaskRepository.findTaskProjectId(taskId);
     if (!task) throw new NotFoundError('요청을 확인할 수 없습니다');
-    
+
     // 권한 확인 (멤버)
     const isMember = await subtaskRepository.isAcceptedProjectMember(task.projectId, requesterId);
     if (!isMember) throw new NotProjectMemberError();
@@ -47,10 +42,7 @@ export const subtaskService = {
   },
 
   // 하위 할 일 목록 조회
-  async getSubtasks(input: {
-    taskId: string;
-    requesterId: string;
-  }): Promise<SubtaskResponseDto[]> {
+  async getSubtasks(input: { taskId: string; requesterId: string }): Promise<SubtaskResponseDto[]> {
     const { taskId, requesterId } = input;
 
     // task 조회
@@ -58,24 +50,17 @@ export const subtaskService = {
     if (!task) throw new NotFoundError('요청을 확인할 수 없습니다');
 
     // 권한 확인 (멤버)
-    const isMember = await subtaskRepository.isAcceptedProjectMember(
-        task.projectId, 
-        requesterId
-    );
+    const isMember = await subtaskRepository.isAcceptedProjectMember(task.projectId, requesterId);
     if (!isMember) throw new NotProjectMemberError();
 
     // 목록 조회
     const rows = await subtaskRepository.findSubtasks(taskId);
 
     return rows.map(toSubtaskResponseDto);
-   
   },
 
   // subtask 조회
-  async getSubtask(input: {
-    subtaskId: string;
-    requesterId: string;
-  }): Promise<SubtaskResponseDto> {
+  async getSubtask(input: { subtaskId: string; requesterId: string }): Promise<SubtaskResponseDto> {
     const { subtaskId, requesterId } = input;
 
     // subtask 조회
@@ -87,10 +72,7 @@ export const subtaskService = {
     if (!task) throw new NotFoundError('요청을 확인할 수 없습니다');
 
     // 권한 확인 (멤버)
-    const isMember = await subtaskRepository.isAcceptedProjectMember(
-      task.projectId,
-      requesterId
-    );
+    const isMember = await subtaskRepository.isAcceptedProjectMember(task.projectId, requesterId);
     if (!isMember) throw new NotProjectMemberError();
 
     // 응답 DTO 변환
@@ -120,10 +102,7 @@ export const subtaskService = {
     const task = await subtaskRepository.findTaskProjectId(subtask.taskId);
     if (!task) throw new NotFoundError('요청을 확인할 수 없습니다');
 
-    const isMember = await subtaskRepository.isAcceptedProjectMember(
-      task.projectId,
-      requesterId
-    );
+    const isMember = await subtaskRepository.isAcceptedProjectMember(task.projectId, requesterId);
     if (!isMember) throw new NotProjectMemberError();
 
     // 업데이트 데이터 구성
@@ -146,10 +125,7 @@ export const subtaskService = {
   },
 
   // subtask 삭제
-  async deleteSubtask(input: {
-    subtaskId: string;
-    requesterId: string;
-  }): Promise<void> {
+  async deleteSubtask(input: { subtaskId: string; requesterId: string }): Promise<void> {
     const { subtaskId, requesterId } = input;
 
     const subtask = await subtaskRepository.findSubtaskById(subtaskId);
@@ -158,10 +134,7 @@ export const subtaskService = {
     const task = await subtaskRepository.findTaskProjectId(subtask.taskId);
     if (!task) throw new NotFoundError('요청을 확인할 수 없습니다');
 
-    const isMember = await subtaskRepository.isAcceptedProjectMember(
-      task.projectId,
-      requesterId
-    );
+    const isMember = await subtaskRepository.isAcceptedProjectMember(task.projectId, requesterId);
     if (!isMember) throw new NotProjectMemberError();
 
     await subtaskRepository.deleteSubtask(subtaskId);

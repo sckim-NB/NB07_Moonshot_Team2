@@ -1,7 +1,6 @@
 import { prisma } from '../lib/db.js';
 
 export const subtaskRepository = {
-
   // 할 일 조회 projectId 확보
   async findTaskProjectId(taskId: string) {
     return prisma.task.findUnique({
@@ -22,8 +21,8 @@ export const subtaskRepository = {
   // 생성된 subtask 맨 아래로
   async findMaxSubtaskOrder(taskId: string) {
     const agg = await prisma.subtask.aggregate({
-        where: { taskId },
-        _max: { order: true },
+      where: { taskId },
+      _max: { order: true },
     });
 
     return agg._max.order ?? null;
@@ -48,7 +47,7 @@ export const subtaskRepository = {
       },
     });
   },
-  
+
   // subtask 목록 조회
   async findSubtasks(taskId: string) {
     return prisma.subtask.findMany({
@@ -82,7 +81,7 @@ export const subtaskRepository = {
     });
   },
 
-    // subtask 수정
+  // subtask 수정
   async updateSubtask(
     subtaskId: string,
     data: { title?: string; status?: 'TODO' | 'IN_PROGRESS' | 'DONE' }
