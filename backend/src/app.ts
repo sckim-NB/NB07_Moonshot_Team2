@@ -33,9 +33,10 @@ app.use(
   helmet({
     contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" },
   })
 );
-
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 // Body Parser (DoS 방지를 위한 크기 제한)
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -58,7 +59,6 @@ app.use('/users', userRouter);
 app.use(taskRouter);
 app.use('/projects', subtaskRouter);
 app.use(commentRouter);
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Error handler (마지막에 위치)
 app.use(errorMiddleware);

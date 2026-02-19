@@ -505,11 +505,10 @@ export const getMyTasks = async (params: FindMyTasksQuery): Promise<Task[]> => {
   }
 };
 
-export const uploadFiles = async (files: File[]): Promise<string[]> => {
+export const uploadFiles = async (files: File[]): Promise<{ message: string; url: string }> => {
   const formData = new FormData();
-  files.forEach((file) => {
-    formData.append('files', file);
-  });
+  // 백엔드 라우터가 upload.single('files') 이므로 키값을 'files'로 유지
+  formData.append('files', files[0]);
   try {
     const response = await axios.postForm('/files', formData);
     return response.data;
