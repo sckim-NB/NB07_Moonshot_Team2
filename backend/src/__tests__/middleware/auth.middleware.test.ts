@@ -26,7 +26,7 @@ describe('Auth Middleware', () => {
 
       authenticate(mockRequest as Request, mockResponse as Response, nextFunction);
 
-      expect(mockRequest.userId).toBe(userId);
+      expect(mockRequest.user?.id).toBe(userId);
       expect(nextFunction).toHaveBeenCalled();
     });
 

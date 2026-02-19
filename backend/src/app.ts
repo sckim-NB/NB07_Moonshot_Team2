@@ -4,10 +4,14 @@ import helmet from 'helmet';
 import { errorMiddleware } from './middleware/error.middleware.js';
 import { env } from './lib/env.js';
 import authRouter from './routes/auth.router.js';
-
+import userRouter from './routes/user.router.js';
 import memberRouter from './routes/member.routes.js';
-
 import projectRouter from './routes/project.router.js';
+import taskRouter from './routes/task.router.js';
+import subtaskRouter from './routes/subtask.routes.js';
+import commentRouter from './routes/comment.router.js';
+import fileRouter from './routes/file.router.js';
+import path from 'path';
 
 const app = express();
 
@@ -42,9 +46,15 @@ app.get('/health', (_req, res) => {
 
 // API Routes
 app.use('/auth', authRouter);
-// app.use('/files', fileRouter);
-app.use(memberRouter);
+app.use('/files', fileRouter);
+app.use('/', memberRouter);
 app.use('/projects', projectRouter);
+app.use('/users', userRouter);
+app.use(taskRouter);
+app.use('/projects', subtaskRouter);
+app.use(commentRouter);
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
 // Error handler (마지막에 위치)
 app.use(errorMiddleware);
 
