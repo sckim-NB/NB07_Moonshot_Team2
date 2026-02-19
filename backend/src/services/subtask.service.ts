@@ -14,13 +14,7 @@ export const subtaskService = {
     requesterId: string;
     title: string;
   }): Promise<SubtaskResponseDto> {
-    const { taskId, requesterId } = input;
-
-    // title 검증
-    if (typeof input.title !== 'string') throw new InvalidRequestError();
-
-    const title = input.title.trim();
-    if (!title) throw new InvalidRequestError();
+    const { taskId, requesterId, title } = input;
 
     // 할 일 조회
     const task = await subtaskRepository.findTaskProjectId(taskId);
@@ -86,13 +80,9 @@ export const subtaskService = {
     title?: string;
     status?: SubtaskStatusDto;
   }): Promise<SubtaskResponseDto> {
-    const { subtaskId, requesterId } = input;
+    const { subtaskId, requesterId, title, status } = input;
 
-    // 최소 1개 필드 있어야 함
-    const hasTitle = typeof input.title === 'string';
-    const hasStatus = typeof input.status === 'string';
-
-    if (!hasTitle && !hasStatus) throw new InvalidRequestError();
+    if (title === undefined && status === undefined) throw new InvalidRequestError();
 
     // subtask 존재 확인
     const subtask = await subtaskRepository.findSubtaskById(subtaskId);
@@ -108,16 +98,8 @@ export const subtaskService = {
     // 업데이트 데이터 구성
     const data: { title?: string; status?: 'TODO' | 'IN_PROGRESS' | 'DONE' } = {};
 
-    if (hasTitle) {
-      const title = input.title!.trim();
-      if (!title) throw new InvalidRequestError();
-      data.title = title;
-    }
-
-    if (hasStatus) {
-      const dbStatus = toDbSubtaskStatus(input.status!);
-      data.status = dbStatus;
-    }
+    if (title !== undefined) data.title = title;
+    if (status !== undefined) data.status = toDbSubtaskStatus(status);
 
     const updated = await subtaskRepository.updateSubtask(subtaskId, data);
 

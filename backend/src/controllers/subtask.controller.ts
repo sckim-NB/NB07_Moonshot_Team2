@@ -1,7 +1,12 @@
 import { RequestHandler } from 'express';
-import { InvalidRequestError, LoginRequiredError } from '../lib/errors.js';
+import { LoginRequiredError } from '../lib/errors.js';
 import { subtaskService } from '../services/subtask.service.js';
-import type { SubtaskStatusDto } from '../dtos/subtask.dto.js';
+import {
+  parseTaskId,
+  parseSubtaskId,
+  parseCreateSubtaskBody,
+  parseUpdateSubtaskBody,
+} from '../validators/subtask.validator.js';
 
 type TaskParams = { taskId: string };
 type SubtaskParams = { subtaskId: string };
@@ -15,32 +20,13 @@ const getRequesterId = (req: unknown): string => {
   return userId;
 };
 
-// title 검증
-const validateTitle = (title: unknown): string => {
-  if (typeof title !== 'string') throw new InvalidRequestError();
-
-  const trimmed = title.trim();
-  if (!trimmed) throw new InvalidRequestError();
-
-  return trimmed;
-};
-
-// status 검증
-const validateStatus = (status: unknown): SubtaskStatusDto => {
-  if (status !== 'todo' && status !== 'in_progress' && status !== 'done') {
-    throw new InvalidRequestError();
-  }
-
-  return status;
-};
-
 // subtask 생성
 export const createSubtask: RequestHandler = async (req, res) => {
-  const { taskId } = req.params as TaskParams;
-  if (!taskId) throw new InvalidRequestError();
+  const { taskId: taskIdRaw } = req.params as TaskParams;
+  const taskId = parseTaskId(taskIdRaw);
 
   const requesterId = getRequesterId(req);
-  const title = validateTitle(req.body?.title);
+  const { title } = parseCreateSubtaskBody(req.body);
 
   const result = await subtaskService.createSubtask({ taskId, requesterId, title });
 
@@ -49,8 +35,8 @@ export const createSubtask: RequestHandler = async (req, res) => {
 
 // subtask 목록 조회
 export const getSubtasksByTask: RequestHandler = async (req, res) => {
-  const { taskId } = req.params as TaskParams;
-  if (!taskId) throw new InvalidRequestError();
+  const { taskId: taskIdRaw } = req.params as TaskParams;
+  const taskId = parseTaskId(taskIdRaw);
 
   const requesterId = getRequesterId(req);
 
@@ -61,8 +47,8 @@ export const getSubtasksByTask: RequestHandler = async (req, res) => {
 
 // subtask 조회
 export const getSubtaskById: RequestHandler = async (req, res) => {
-  const { subtaskId } = req.params as SubtaskParams;
-  if (!subtaskId) throw new InvalidRequestError();
+  const { subtaskId: subtaskIdRaw } = req.params as SubtaskParams;
+  const subtaskId = parseSubtaskId(subtaskIdRaw);
 
   const requesterId = getRequesterId(req);
 
@@ -73,21 +59,12 @@ export const getSubtaskById: RequestHandler = async (req, res) => {
 
 // subtask 수정
 export const updateSubtask: RequestHandler = async (req, res) => {
-  const { subtaskId } = req.params as SubtaskParams;
-  if (!subtaskId) throw new InvalidRequestError();
+  const { subtaskId: subtaskIdRaw } = req.params as SubtaskParams;
+  const subtaskId = parseSubtaskId(subtaskIdRaw);
 
   const requesterId = getRequesterId(req);
 
-  const titleRaw = req.body?.title;
-  const statusRaw = req.body?.status;
-
-  const hasTitle = titleRaw !== undefined;
-  const hasStatus = statusRaw !== undefined;
-
-  if (!hasTitle && !hasStatus) throw new InvalidRequestError();
-
-  const title = hasTitle ? validateTitle(titleRaw) : undefined;
-  const status = hasStatus ? validateStatus(statusRaw) : undefined;
+  const { title, status } = parseUpdateSubtaskBody(req.body);
 
   const result = await subtaskService.updateSubtask({
     subtaskId,
@@ -101,8 +78,8 @@ export const updateSubtask: RequestHandler = async (req, res) => {
 
 // subtask 삭제
 export const deleteSubtask: RequestHandler = async (req, res) => {
-  const { subtaskId } = req.params as SubtaskParams;
-  if (!subtaskId) throw new InvalidRequestError();
+  const { subtaskId: subtaskIdRaw } = req.params as SubtaskParams;
+  const subtaskId = parseSubtaskId(subtaskIdRaw);
 
   const requesterId = getRequesterId(req);
 
