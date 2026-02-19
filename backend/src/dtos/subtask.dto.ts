@@ -13,16 +13,16 @@ export type SubtaskResponseDto = {
 };
 
 // DB(enum) -> API(string) 변환
-export const toApiSubtaskStatus = (s: TaskStatus): SubtaskStatusDto => {
-  if (s === 'TODO') return 'todo';
-  if (s === 'IN_PROGRESS') return 'in_progress';
+export const toApiSubtaskStatus = (status: TaskStatus): SubtaskStatusDto => {
+  if (status === 'TODO') return 'todo';
+  if (status === 'IN_PROGRESS') return 'in_progress';
   return 'done';
 };
 
 // API(string) -> DB(enum) 변환
-export const toDbSubtaskStatus = (s: SubtaskStatusDto): TaskStatus => {
-  if (s === 'todo') return 'TODO';
-  if (s === 'in_progress') return 'IN_PROGRESS';
+export const toDbSubtaskStatus = (status: SubtaskStatusDto): TaskStatus => {
+  if (status === 'todo') return 'TODO';
+  if (status === 'in_progress') return 'IN_PROGRESS';
   return 'DONE';
 };
 
