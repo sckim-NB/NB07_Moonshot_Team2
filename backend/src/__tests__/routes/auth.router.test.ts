@@ -79,7 +79,7 @@ describe('Auth Routes', () => {
 
   describe('POST /auth/login', () => {
     it('올바른 자격증명으로 토큰을 반환해야 함', async () => {
-      const response = await request(app).post('/auth/login').send({
+      const response = await request(app).post('/api/auth/login').send({
         email: 'authtest@example.com',
         password: 'Test1234',
       });
@@ -92,7 +92,7 @@ describe('Auth Routes', () => {
     });
 
     it('잘못된 이메일로 404를 반환해야 함', async () => {
-      const response = await request(app).post('/auth/login').send({
+      const response = await request(app).post('/api/auth/login').send({
         email: 'nonexistent@example.com',
         password: 'Test1234',
       });
@@ -102,7 +102,7 @@ describe('Auth Routes', () => {
     });
 
     it('잘못된 비밀번호로 404를 반환해야 함', async () => {
-      const response = await request(app).post('/auth/login').send({
+      const response = await request(app).post('/api/auth/login').send({
         email: 'authtest@example.com',
         password: 'WrongPassword123',
       });
@@ -115,7 +115,7 @@ describe('Auth Routes', () => {
   describe('POST /auth/refresh', () => {
     it('유효한 refresh token으로 새 토큰을 반환해야 함', async () => {
       // 먼저 로그인하여 토큰 획득
-      const loginResponse = await request(app).post('/auth/login').send({
+      const loginResponse = await request(app).post('/api/auth/login').send({
         email: 'authtest@example.com',
         password: 'Test1234',
       });
@@ -133,14 +133,14 @@ describe('Auth Routes', () => {
     });
 
     it('Authorization 헤더 없이 400을 반환해야 함', async () => {
-      const response = await request(app).post('/auth/refresh');
+      const response = await request(app).post('/api/auth/refresh');
 
       expect(response.status).toBe(400);
     });
 
     it('잘못된 refresh token으로 400을 반환해야 함', async () => {
       const response = await request(app)
-        .post('/auth/refresh')
+        .post('/api/auth/refresh')
         .set('Authorization', 'Bearer invalid-token');
 
       expect(response.status).toBe(400);
@@ -151,14 +151,14 @@ describe('Auth Routes', () => {
     it('/auth/login에 rate limit이 적용되어야 함', async () => {
       // 6번 성공적인 로그인 시도 (skipFailedRequests=true이므로 성공 요청만 카운트)
       for (let i = 0; i < 6; i++) {
-        await request(app).post('/auth/login').send({
+        await request(app).post('/api/auth/login').send({
           email: 'authtest@example.com',
           password: 'Test1234',
         });
       }
 
       // 7번째 시도는 rate limit에 걸려야 함
-      const response = await request(app).post('/auth/login').send({
+      const response = await request(app).post('/api/auth/login').send({
         email: 'authtest@example.com',
         password: 'Test1234',
       });
