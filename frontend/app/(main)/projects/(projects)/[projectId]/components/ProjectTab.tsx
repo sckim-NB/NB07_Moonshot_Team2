@@ -21,7 +21,7 @@ const TaskTabMenu = ({
   projectId,
   members,
 }: {
-  projectId: number;
+  projectId: string;
   members: User[];
 }) => {
   const params = useSearchParams();
@@ -153,7 +153,7 @@ const ProjectTab = ({
   projectId,
   members,
 }: {
-  projectId: number;
+  projectId: string;
   members: User[];
 }) => {
   const pathname = usePathname();

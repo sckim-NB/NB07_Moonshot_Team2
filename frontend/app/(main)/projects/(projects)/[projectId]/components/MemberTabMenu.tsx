@@ -12,7 +12,7 @@ import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
 
-const MemberTabMenu = ({ projectId }: { projectId: number }) => {
+const MemberTabMenu = ({ projectId }: { projectId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [state, dispatch, isPending] = useActionState(
     async (prevState: { email: string }, formData: FormData) => {

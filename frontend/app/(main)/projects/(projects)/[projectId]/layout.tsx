@@ -21,11 +21,11 @@ const ProjectLayout = async ({
     projectId: string;
   }>;
 }) => {
-  const { projectId: projectIdString } = await params;
-  const projectId = Number(projectIdString);
-  if (isNaN(projectId)) {
-    return redirect('/projects');
-  }
+  const { projectId } = await params;
+  // const projectId = Number(projectIdString);
+  // if (isNaN(projectId)) {
+  //   return redirect('/projects');
+  // }
 
   let project: Project;
   try {

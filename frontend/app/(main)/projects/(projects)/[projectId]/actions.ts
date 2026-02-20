@@ -6,7 +6,7 @@ import { Project, Task } from '@/types/entities';
 import { revalidatePath } from 'next/cache';
 
 interface CreateTaskInput {
-  projectId: number;
+  projectId: string;
   title: string;
   description: string;
   startYear: number;
@@ -48,7 +48,7 @@ interface UpdateProjectInput {
 }
 
 export const updateProject = async (
-  projectId: number,
+  projectId: string,
   payload: UpdateProjectInput
 ): Promise<ActionResult<Project>> => {
   try {
@@ -95,7 +95,7 @@ export const deleteProject = async (
 };
 
 export const inviteMember = async (
-  projectId: number,
+  projectId: string,
   email: string
 ): Promise<ActionResult<null>> => {
   try {

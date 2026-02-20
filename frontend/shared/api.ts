@@ -161,7 +161,7 @@ export const createProject = async (payload: {
   }
 };
 
-export const getProjectById = async (projectId: number): Promise<Project> => {
+export const getProjectById = async (projectId: string): Promise<Project> => {
   try {
     const response = await axios.get(`/projects/${projectId}`);
     return response.data;
@@ -177,7 +177,7 @@ export const getProjectById = async (projectId: number): Promise<Project> => {
 };
 
 export const updateProject = async (
-  projectId: number,
+  projectId: string,
   payload: {
     name?: string;
     description?: string;
@@ -197,7 +197,7 @@ export interface GetProjectUsersParams {
 }
 
 export const getProjectUsers = async (
-  projectId: number,
+  projectId: string,
   params: GetProjectUsersParams
 ): Promise<PaginationResponse<UserWithCounts>> => {
   try {
@@ -217,7 +217,7 @@ export const getProjectUsers = async (
   }
 };
 
-export const inviteMember = async (projectId: number, email: string) => {
+export const inviteMember = async (projectId: string, email: string) => {
   try {
     await axios.post(`/projects/${projectId}/invitations`, { email });
   } catch (error) {
@@ -257,7 +257,7 @@ export interface GetTasksByProjectIdParams {
 }
 
 export const getTasksByProjectId = async (
-  projectId: number,
+  projectId: string,
   params: GetTasksByProjectIdParams
 ): Promise<PaginationResponse<Task>> => {
   try {
@@ -277,7 +277,7 @@ export const getTasksByProjectId = async (
 };
 
 export const createTask = async (payload: {
-  projectId: number;
+  projectId: string;
   title: string;
   description: string;
   startYear: number;
@@ -490,7 +490,7 @@ export const deleteComment = async (commentId: number) => {
 
 export const getMyTasks = async (params: FindMyTasksQuery): Promise<Task[]> => {
   try {
-    const response = await axios.get('/users/me/tasks', {
+    const response = await axios.get('/users/me/projects/tasks', {
       params,
     });
     return response.data;
