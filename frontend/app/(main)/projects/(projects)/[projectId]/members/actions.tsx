@@ -30,7 +30,7 @@ export const getProjectUsers = async (
 };
 
 export const removeMember = async (
-  projectId: number,
+  projectId: string,
   userId: number
 ): Promise<ActionResult<null>> => {
   try {
@@ -53,7 +53,7 @@ export const removeMember = async (
 };
 
 export const removeInvitation = async (
-  projectId: number,
+  projectId: string,
   invitationId: string
 ): Promise<ActionResult<null>> => {
   try {

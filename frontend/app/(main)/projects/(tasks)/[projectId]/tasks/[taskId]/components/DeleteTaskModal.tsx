@@ -16,7 +16,7 @@ const DeleteTaskModal = ({
   onSubmit,
   onClose,
 }: {
-  taskId: number;
+  taskId: string;
   isOpen: boolean;
   onSubmit: () => void;
   onClose: () => void;

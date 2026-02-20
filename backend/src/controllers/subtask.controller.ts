@@ -1,4 +1,4 @@
-import { RequestHandler } from 'express';
+import { Request, RequestHandler } from 'express';
 import { LoginRequiredError } from '../lib/errors.js';
 import { subtaskService } from '../services/subtask.service.js';
 import {
@@ -12,11 +12,16 @@ type TaskParams = { taskId: string };
 type SubtaskParams = { subtaskId: string };
 
 // 요청자 ID 추출 및 검증
-const getRequesterId = (req: unknown): string => {
-  const userId = (req as { userId?: unknown }).userId;
+const getRequesterId = (req: Request): string => {
+  // 🚨 기존: const userId = (req as { userId?: unknown }).userId;
+  // ✅ 수정: 보통 미들웨어는 req.user에 정보를 담습니다.
+  // 만약 미들웨어에서 req.userId = user.id 로 설정했다면 그대로 두되,
+  // 아니라면 아래처럼 req.user.id를 확인해야 합니다.
+  const userId = req.user?.id || req.userId;
 
-  if (typeof userId !== 'string' || !userId) throw new LoginRequiredError();
-
+  if (!userId || typeof userId !== 'string') {
+    throw new LoginRequiredError();
+  }
   return userId;
 };
 

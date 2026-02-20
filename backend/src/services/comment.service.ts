@@ -43,20 +43,22 @@ export async function createComment(data: CreatedCommentInput) {
 }
 
 export async function listComments(params: ListCommentsInput) {
-  const extingingComment = await commentRepository.getComment(params.taskId);
-  if (!extingingComment) {
-    throw new NotFoundError();
-  }
-  const requesterId = '';
-  if (extingingComment.userId === requesterId) {
-    throw new BadRequestError('You cannot create a comment on your own task.');
-  }
+  // 🚨 삭제: taskId로 '댓글 하나'를 찾는 이 로직이 404의 범인입니다.
+  // const extingingComment = await commentRepository.getComment(params.taskId);
+  // if (!extingingComment) {
+  //   throw new NotFoundError();
+  // }
 
   const { comments } = await commentRepository.listComments({
     page: params.page ?? 1,
     pageSize: params.pageSize ?? 10,
     taskId: params.taskId,
   });
+
+  // const requesterId = '';
+  // if (extingingComment.userId === requesterId) {
+  //   throw new BadRequestError('You cannot create a comment on your own task.');
+  // }
 
   const commentDtos = comments.map(
     (comment) =>

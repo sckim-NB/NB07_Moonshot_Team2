@@ -12,7 +12,7 @@ const RemoveMember = ({
   projectId,
 }: {
   userId: number;
-  projectId: number;
+  projectId: string;
 }) => {
   const [isRemoveMemberModalOpen, setIsRemoveMemberModalOpen] = useState(false);
 

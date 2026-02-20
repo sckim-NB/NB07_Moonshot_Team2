@@ -11,6 +11,8 @@ export const authenticate = (req: Request, _res: Response, next: NextFunction) =
   if (!token && req.cookies) {
     token = req.cookies['access-token'];
   }
+  console.log('Headers Auth:', req.headers.authorization);
+  console.log('Cookies Auth:', req.cookies?.['access-token']);
 
   // 토큰이 아예 없는 경우
   if (!token) {

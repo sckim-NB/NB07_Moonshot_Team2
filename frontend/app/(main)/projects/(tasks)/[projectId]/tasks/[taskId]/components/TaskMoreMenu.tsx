@@ -17,7 +17,7 @@ const TaskMoreMenu = ({
   task,
 }: {
   className?: string;
-  projectId: number;
+  projectId: string;
   task: Task;
 }) => {
   const router = useRouter();

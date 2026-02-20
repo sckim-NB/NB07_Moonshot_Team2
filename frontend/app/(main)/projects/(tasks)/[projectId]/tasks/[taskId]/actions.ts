@@ -7,7 +7,7 @@ import { TaskStatus } from '@/types/TaskStatus';
 import { revalidatePath } from 'next/cache';
 
 export const getTaskById = async (
-  taskId: number
+  taskId: string
 ): Promise<ActionResult<Task>> => {
   try {
     const task = await api.getTaskById(taskId);
@@ -29,7 +29,7 @@ export const getTaskById = async (
 };
 
 export const updateTask = async (
-  taskId: number,
+  taskId: string,
   payload: UpdateTaskPayload
 ): Promise<ActionResult<Task>> => {
   try {
@@ -54,7 +54,7 @@ export const updateTask = async (
 };
 
 export const deleteTask = async (
-  taskId: number
+  taskId: string
 ): Promise<ActionResult<null>> => {
   try {
     await api.deleteTask(taskId);
@@ -76,7 +76,7 @@ export const deleteTask = async (
 };
 
 export const getSubTasksByTaskId = async (
-  taskId: number
+  taskId: string
 ): Promise<ActionResult<SubTask[]>> => {
   try {
     const subTasks = await api.getSubTasksByTaskId(taskId);
@@ -98,7 +98,7 @@ export const getSubTasksByTaskId = async (
 };
 
 export const createSubtask = async (
-  taskId: number,
+  taskId: string,
   payload: { title: string }
 ): Promise<ActionResult<SubTask>> => {
   try {
@@ -122,8 +122,8 @@ export const createSubtask = async (
 };
 
 export const updateSubtask = async (
-  taskId: number,
-  subtaskId: number,
+  taskId: string,
+  subtaskId: string,
   payload: { title?: string; status?: TaskStatus }
 ): Promise<ActionResult<SubTask>> => {
   try {
@@ -147,8 +147,8 @@ export const updateSubtask = async (
 };
 
 export const deleteSubtask = async (
-  taskId: number,
-  subtaskId: number
+  taskId: string,
+  subtaskId: string
 ): Promise<ActionResult<null>> => {
   try {
     await api.deleteSubtask(subtaskId);
@@ -171,7 +171,7 @@ export const deleteSubtask = async (
 };
 
 export const getCommentsByTaskId = async (
-  taskId: number
+  taskId: string
 ): Promise<ActionResult<Comment[]>> => {
   try {
     const comments = await api.getCommentsByTaskId(taskId);
@@ -193,7 +193,7 @@ export const getCommentsByTaskId = async (
 };
 
 export const createComment = async (
-  taskId: number,
+  taskId: string,
   payload: { content: string }
 ): Promise<ActionResult<Comment>> => {
   try {
@@ -217,8 +217,8 @@ export const createComment = async (
 };
 
 export const updateComment = async (
-  taskId: number,
-  commentId: number,
+  taskId: string,
+  commentId: string,
   payload: { content: string }
 ): Promise<ActionResult<Comment>> => {
   try {
@@ -242,8 +242,8 @@ export const updateComment = async (
 };
 
 export const deleteComment = async (
-  taskId: number,
-  commentId: number
+  taskId: string,
+  commentId: string
 ): Promise<ActionResult<null>> => {
   try {
     await api.deleteComment(commentId);

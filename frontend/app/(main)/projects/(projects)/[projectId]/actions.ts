@@ -72,7 +72,7 @@ export const updateProject = async (
 };
 
 export const deleteProject = async (
-  projectId: number
+  projectId: string
 ): Promise<ActionResult<null>> => {
   try {
     await api.deleteProject(projectId);

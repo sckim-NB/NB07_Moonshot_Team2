@@ -32,6 +32,8 @@ export async function totalCommentsCount(taskId: string) {
 }
 
 export async function getComment(commentId: string) {
+  // ID가 없으면 조회를 시도하지 않도록 방어 코드 추가
+  if (!commentId) return null;
   return await prisma.comment.findUnique({
     where: { id: commentId },
     include: {

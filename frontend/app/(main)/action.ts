@@ -102,7 +102,7 @@ export const getMyTasks = async (
 };
 
 export const getProjectUsers = async (
-  projectId: number,
+  projectId: string,
   params: api.GetProjectUsersParams
 ): Promise<ActionResult<PaginationResponse<UserWithCounts>>> => {
   try {
