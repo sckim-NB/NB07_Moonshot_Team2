@@ -124,7 +124,7 @@ describe('Auth Routes', () => {
 
       // refresh 요청
       const response = await request(app)
-        .post('/auth/refresh')
+        .post('/api/auth/refresh')
         .set('Authorization', `Bearer ${refreshToken}`);
 
       expect(response.status).toBe(200);
