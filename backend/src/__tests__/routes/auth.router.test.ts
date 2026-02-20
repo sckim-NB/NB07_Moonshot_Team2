@@ -31,7 +31,7 @@ describe('Auth Routes', () => {
 
   describe('POST /auth/register', () => {
     it('새 유저를 생성하고 201을 반환해야 함', async () => {
-      const response = await request(app).post('/auth/register').send({
+      const response = await request(app).post('/api/auth/register').send({
         email: 'newuser@example.com',
         password: 'NewPass1234',
         name: 'New User',
@@ -46,7 +46,7 @@ describe('Auth Routes', () => {
     });
 
     it('중복된 이메일로 회원가입 시 400을 반환해야 함', async () => {
-      const response = await request(app).post('/auth/register').send({
+      const response = await request(app).post('/api/auth/register').send({
         email: 'authtest@example.com',
         password: 'Test1234',
         name: 'Duplicate User',
@@ -57,7 +57,7 @@ describe('Auth Routes', () => {
     });
 
     it('유효하지 않은 이메일 형식은 400을 반환해야 함', async () => {
-      const response = await request(app).post('/auth/register').send({
+      const response = await request(app).post('/api/auth/register').send({
         email: 'invalid-email',
         password: 'Test1234',
         name: 'Test User',
@@ -67,7 +67,7 @@ describe('Auth Routes', () => {
     });
 
     it('약한 비밀번호 형식은 400을 반환해야 함', async () => {
-      const response = await request(app).post('/auth/register').send({
+      const response = await request(app).post('/api/auth/register').send({
         email: 'test2@example.com',
         password: '123',
         name: 'Test User',
