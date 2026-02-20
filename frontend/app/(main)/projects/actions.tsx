@@ -3,7 +3,7 @@ import { Project } from '@/types/entities';
 import ActionResult from '@/types/ActionResult';
 
 export const getProjectById = async (
-  projectId: number
+  projectId: string
 ): Promise<ActionResult<Project>> => {
   try {
     const project = await api.getProjectById(projectId);

@@ -12,9 +12,10 @@ import subtaskRouter from './routes/subtask.routes.js';
 import commentRouter from './routes/comment.router.js';
 import fileRouter from './routes/file.router.js';
 import path from 'path';
+import cookieParser from 'cookie-parser';
 
 const app = express();
-
+app.use(cookieParser());
 // CORS 설정
 app.use(
   cors({
@@ -51,14 +52,14 @@ app.get('/health', (_req, res) => {
 });
 
 // API Routes
-app.use('/auth', authRouter);
-app.use('/files', fileRouter);
-app.use('/', memberRouter);
-app.use('/projects', projectRouter);
-app.use('/users', userRouter);
-app.use(taskRouter);
-app.use('/projects', subtaskRouter);
-app.use(commentRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/files', fileRouter);
+app.use('/api/members', memberRouter);
+app.use('/api/projects', projectRouter);
+app.use('/api/users', userRouter);
+app.use('/api', taskRouter);
+app.use('/api/projects', subtaskRouter);
+app.use('/api/comments', commentRouter);
 
 // Error handler (마지막에 위치)
 app.use(errorMiddleware);

@@ -7,7 +7,7 @@ import { PaginationResponse } from '@/types/pagination';
 import { revalidatePath } from 'next/cache';
 
 export const getProjectUsers = async (
-  projectId: number,
+  projectId: string,
   params: api.GetProjectUsersParams
 ): Promise<ActionResult<PaginationResponse<UserWithCounts>>> => {
   try {
