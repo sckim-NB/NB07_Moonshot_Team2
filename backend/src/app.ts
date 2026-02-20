@@ -57,9 +57,9 @@ app.use('/api/files', fileRouter);
 app.use('/api/members', memberRouter);
 app.use('/api/projects', projectRouter);
 app.use('/api/users', userRouter);
-app.use('/api',taskRouter);
+app.use('/api', taskRouter);
 app.use('/api/projects', subtaskRouter);
-app.use('/api/comments',commentRouter);
+app.use('/api/comments', commentRouter);
 
 // Error handler (마지막에 위치)
 app.use(errorMiddleware);
