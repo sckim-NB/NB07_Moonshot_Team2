@@ -8,7 +8,7 @@ const EditTaskAttachmentInput = ({
   taskId,
   urls,
 }: {
-  taskId: number;
+  taskId: string;
   urls: string[];
 }) => {
   const handleChange = async (urls: string[]) => {

@@ -25,9 +25,9 @@ const TaskPage = async ({
     taskId: string;
   }>;
 }) => {
-  const { projectId: projectIdString, taskId: taskIdString } = await params;
-  const projectId = Number(projectIdString);
-  const taskId = Number(taskIdString);
+  const { projectId, taskId} = await params;
+  // const projectId = Number(projectIdString);
+  // const taskId = Number(taskIdString);
   const { data: project, error: projectError } = await getProjectById(
     projectId
   );
@@ -58,7 +58,7 @@ const TaskPage = async ({
         <div className={cx('header')}>
           <div className={cx('title')}>
             <h1 className={cx('titleText')}>{task.title}</h1>
-            <TaskDropdown taskId={taskId} taskStatus={task.status} />
+            <TaskDropdown taskId={taskId} task={task} />
           </div>
           <div className={cx('metadata')}>
             <div className={cx('date')}>

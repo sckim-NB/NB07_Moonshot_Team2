@@ -18,7 +18,7 @@ const CommentItem = ({
   taskId,
   comment,
 }: {
-  taskId: number;
+  taskId: string;
   comment: Comment;
 }) => {
   const author = comment.author!;
@@ -62,7 +62,7 @@ const CommentList = ({
   taskId,
 }: {
   comments: Comment[];
-  taskId: number;
+  taskId: string;
 }) => {
   const [state, dispatch, isPending] = useActionState(
     async (prevState: { content: string }, nextState: FormData) => {

@@ -10,7 +10,7 @@ const ProjectListItem = ({
   projectId,
   name,
 }: {
-  projectId: number;
+  projectId: string;
   name: string;
 }) => {
   return (

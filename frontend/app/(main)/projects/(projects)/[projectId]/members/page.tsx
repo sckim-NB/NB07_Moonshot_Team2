@@ -24,9 +24,9 @@ const MembersPage = async ({
   params: Promise<{ projectId: string }>;
   searchParams: Promise<{ page?: number }>;
 }) => {
-  const { projectId: projectIdString } = await params;
+  const { projectId } = await params;
   const { page } = await searchParams;
-  const projectId = Number(projectIdString);
+  //const projectId = Number(projectIdString);
   const { data } = await getProjectUsers(projectId, {
     page: page ?? 1,
     limit: PAGE_SIZE,

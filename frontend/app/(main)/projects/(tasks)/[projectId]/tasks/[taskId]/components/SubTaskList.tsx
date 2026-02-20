@@ -16,7 +16,7 @@ const SubTaskItem = ({
   taskId,
   subTask,
 }: {
-  taskId: number;
+  taskId: string;
   subTask: SubTask;
 }) => {
   const [, dispatchUpdate] = useActionState(
@@ -78,7 +78,7 @@ const SubTaskList = ({
   taskId,
   subTasks,
 }: {
-  taskId: number;
+  taskId: string;
   subTasks: SubTask[];
 }) => {
   const [state, dispatchCreate, isPendingCreate] = useActionState(

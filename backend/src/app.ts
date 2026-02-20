@@ -54,12 +54,12 @@ app.get('/health', (_req, res) => {
 // API Routes
 app.use('/api/auth', authRouter);
 app.use('/api/files', fileRouter);
-app.use('/api/members', memberRouter);
 app.use('/api/projects', projectRouter);
 app.use('/api/users', userRouter);
+app.use('/api', memberRouter);
 app.use('/api', taskRouter);
-app.use('/api/projects', subtaskRouter);
-app.use('/api/comments', commentRouter);
+app.use('/api', subtaskRouter);
+app.use('/api', commentRouter);
 
 // Error handler (마지막에 위치)
 app.use(errorMiddleware);

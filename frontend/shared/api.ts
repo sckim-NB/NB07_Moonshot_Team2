@@ -62,11 +62,15 @@ export const register = async (payload: {
   }
 };
 
-export const refreshToken = async (refreshToken: string | null) => {
+export const refreshToken = async (token: string | null) => {
+  if (!token || token === 'undefined' || token === 'null') {
+    console.error('[프론트] 리프레시 토큰이 없어 요청을 중단합니다.');
+    throw new Error('리프레시 토큰이 없습니다.');
+  }
   try {
-    const response = await axios.post('/auth/refresh', {
+    const response = await axios.post('/auth/refresh',{}, {
       headers: {
-        Authorization: `Bearer ${refreshToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -187,7 +191,7 @@ export const updateProject = async (
   return response.data;
 };
 
-export const deleteProject = async (projectId: number) => {
+export const deleteProject = async (projectId: string) => {
   await axios.delete(`/projects/${projectId}`);
 };
 
@@ -201,7 +205,7 @@ export const getProjectUsers = async (
   params: GetProjectUsersParams
 ): Promise<PaginationResponse<UserWithCounts>> => {
   try {
-    const response = await axios.get(`/projects/${projectId}/users`, {
+    const response = await axios.get(`/projects/${projectId}/members`, {
       params,
     });
     return response.data;
@@ -231,7 +235,7 @@ export const inviteMember = async (projectId: string, email: string) => {
   }
 };
 
-export const removeMember = async (projectId: number, userId: number) => {
+export const removeMember = async (projectId: string, userId: string) => {
   try {
     await axios.delete(`/projects/${projectId}/users/${userId}`);
   } catch (error) {
@@ -248,7 +252,7 @@ export const removeMember = async (projectId: number, userId: number) => {
 export interface GetTasksByProjectIdParams {
   order_by?: 'created_at' | 'end_date' | 'title';
   status?: TaskStatus;
-  assignee?: number;
+  assignee?: string;
   from?: Date;
   to?: Date;
   keyword?: string;
@@ -304,7 +308,7 @@ export const createTask = async (payload: {
   }
 };
 
-export const getTaskById = async (taskId: number): Promise<Task> => {
+export const getTaskById = async (taskId: string): Promise<Task> => {
   try {
     const response = await axios.get(`/tasks/${taskId}`);
     return response.data;
@@ -320,7 +324,7 @@ export const getTaskById = async (taskId: number): Promise<Task> => {
 };
 
 export const updateTask = async (
-  taskId: number,
+  taskId: string,
   payload: UpdateTaskPayload
 ) => {
   try {
@@ -337,12 +341,12 @@ export const updateTask = async (
   }
 };
 
-export const deleteTask = async (taskId: number) => {
+export const deleteTask = async (taskId: string) => {
   await axios.delete(`/tasks/${taskId}`);
 };
 
 export const getSubTasksByTaskId = async (
-  taskId: number
+  taskId: string
 ): Promise<SubTask[]> => {
   try {
     const response = await axios.get(`/tasks/${taskId}/subtasks`);
@@ -360,7 +364,7 @@ export const getSubTasksByTaskId = async (
 };
 
 export const createSubTask = async (
-  taskId: number,
+  taskId: string,
   payload: {
     title: string;
   }
@@ -381,7 +385,7 @@ export const createSubTask = async (
 };
 
 export const updateSubTask = async (
-  subtaskId: number,
+  subtaskId: string,
   payload: {
     title?: string;
     status?: TaskStatus;
@@ -402,7 +406,7 @@ export const updateSubTask = async (
   }
 };
 
-export const deleteSubtask = async (subtaskId: number) => {
+export const deleteSubtask = async (subtaskId: string) => {
   try {
     await axios.delete(`/subtasks/${subtaskId}`);
   } catch (error) {
@@ -418,7 +422,7 @@ export const deleteSubtask = async (subtaskId: number) => {
 };
 
 export const getCommentsByTaskId = async (
-  taskId: number
+  taskId: string
 ): Promise<Comment[]> => {
   try {
     const response = await axios.get(`/tasks/${taskId}/comments`);
@@ -435,7 +439,7 @@ export const getCommentsByTaskId = async (
 };
 
 export const createComment = async (
-  taskId: number,
+  taskId: string,
   payload: {
     content: string;
   }
@@ -455,7 +459,7 @@ export const createComment = async (
 };
 
 export const updateComment = async (
-  commentId: number,
+  commentId: string,
   payload: {
     content: string;
   }
@@ -474,7 +478,7 @@ export const updateComment = async (
   }
 };
 
-export const deleteComment = async (commentId: number) => {
+export const deleteComment = async (commentId: string) => {
   try {
     await axios.delete(`/comments/${commentId}`);
   } catch (error) {

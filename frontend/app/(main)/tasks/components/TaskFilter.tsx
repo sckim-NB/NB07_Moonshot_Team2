@@ -26,10 +26,10 @@ const TaskFilter = ({
   const params = useSearchParams();
   const router = useRouter();
 
-  const handleProjectChange = (id: number | null) => {
+  const handleProjectChange = (id: string | null) => {
     const searchParams = new URLSearchParams(params);
     if (id) {
-      searchParams.set('project_id', id.toString());
+      searchParams.set('project_id', id);
       searchParams.delete('assignee_id');
     } else {
       searchParams.delete('project_id');
@@ -72,9 +72,9 @@ const TaskFilter = ({
     router.push(`?${searchParams.toString()}`);
   };
 
-  const isActiveProject = (id: number | null) => {
+  const isActiveProject = (id: string | null) => {
     return (
-      params.get('project_id') === id?.toString() ||
+      params.get('project_id') === id ||
       (id === null && !params.get('project_id'))
     );
   };

@@ -12,9 +12,14 @@ export const axios = Axios.default.create({
 });
 
 axios.interceptors.request.use(async (config) => {
-  const accessToken = await getAccessToken();
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
+  try {
+    const accessToken = await getAccessToken();
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+  } catch (e) {
+    // 서버 전용 함수를 브라우저에서 호출할 때 발생하는 에러 방어
+    console.warn('인증 토큰을 가져오는 중 경고 발생 (클라이언트 환경 가능성)');
   }
   return config;
 });
@@ -24,8 +29,13 @@ axios.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // [수정] error.response가 있는지 '반드시' 먼저 확인합니다.
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      // 🚨 [핵심] 브라우저 환경에서만 리프레시를 시도하도록 제한합니다.
+      // 서버 사이드(SSR)에서는 인터셉터를 통한 리프레시가 매우 복잡하고 위험합니다.
+      if (typeof window === 'undefined') {
+        return Promise.reject(error);
+      }
+
       originalRequest._retry = true;
       try {
         await refreshTokens();
@@ -34,12 +44,6 @@ axios.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
-
-    // response가 아예 없는 네트워크 에러 등의 경우 처리
-    if (!error.response) {
-      console.error('네트워크 에러 또는 서버 응답 없음');
-    }
-
     return Promise.reject(error);
   }
 );

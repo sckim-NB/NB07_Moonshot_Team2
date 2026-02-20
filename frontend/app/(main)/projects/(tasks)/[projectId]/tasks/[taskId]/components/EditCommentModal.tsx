@@ -19,7 +19,7 @@ const EditCommentModal = ({
   onSubmit,
   onClose,
 }: {
-  taskId: number;
+  taskId: string;
   comment: Comment;
   isOpen: boolean;
   onSubmit: () => void;

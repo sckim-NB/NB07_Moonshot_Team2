@@ -17,7 +17,7 @@ const CommentMoreMenu = ({
   comment,
 }: {
   className?: string;
-  taskId: number;
+  taskId: string;
   comment: Comment;
 }) => {
   const [selectedOption, setSelectedOption] = useState<
