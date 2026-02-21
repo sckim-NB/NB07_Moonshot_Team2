@@ -32,4 +32,3 @@ export const authenticate = (req: Request, _res: Response, next: NextFunction) =
 
   next();
 };
-

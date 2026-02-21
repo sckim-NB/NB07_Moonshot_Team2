@@ -20,7 +20,7 @@ export async function listComments(params: { page: number; pageSize: number; tas
     skip: (params.page - 1) * params.pageSize,
     take: params.pageSize,
     include: {
-      user: true, 
+      user: true,
     },
   });
 

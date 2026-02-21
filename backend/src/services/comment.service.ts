@@ -11,8 +11,6 @@ import { NotFoundError, NotCommentOwnerError, BadRequestError } from '../lib/err
 export async function createComment(data: CreatedCommentInput) {
   const dto = new CommentRequestDto(data);
 
- 
-
   const createdComment = await commentRepository.createComment({
     content: dto.content,
     userId: dto.userId,

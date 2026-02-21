@@ -18,7 +18,7 @@ export async function createTask(data: {
   const createData = {
     // 🚨 projectId: data.projectId 대신 아래와 같이 '관계'로 연결합니다.
     project: {
-      connect: { id: data.projectId }
+      connect: { id: data.projectId },
     },
     title: data.title,
     startYear: data.startYear,
@@ -28,9 +28,7 @@ export async function createTask(data: {
     endMonth: data.endMonth,
     endDay: data.endDay,
     status: data.status.toUpperCase() as unknown as TaskStatus,
-    ...(data.assignee 
-      ? { assignee: { connect: { id: data.assignee } } } 
-      : {}),
+    ...(data.assignee ? { assignee: { connect: { id: data.assignee } } } : {}),
     taskTags: {
       create: data.tags.map((tagName) => ({
         tag: {
@@ -189,10 +187,10 @@ export async function getTask(taskId: string) {
       attachments: true,
       comments: {
         include: {
-          user: true, 
+          user: true,
         },
         orderBy: {
-          createdAt: 'asc', 
+          createdAt: 'asc',
         },
       },
     },

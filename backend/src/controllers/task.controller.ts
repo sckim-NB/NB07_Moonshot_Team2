@@ -6,7 +6,7 @@ export async function createTask(req: Request, res: Response) {
   const { projectId } = req.params;
   const dataToValidate = {
     ...req.body,
-    projectId: projectId, 
+    projectId: projectId,
   };
   const validatedData = createdTaskSchema.parse(dataToValidate);
   const newTask = await taskService.createTask(validatedData);

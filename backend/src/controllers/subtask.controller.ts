@@ -1,5 +1,5 @@
 import { Request, RequestHandler } from 'express';
-import {User as PrismaUser} from '@prisma/client';
+import { User as PrismaUser } from '@prisma/client';
 import { LoginRequiredError } from '../lib/errors.js';
 import { subtaskService } from '../services/subtask.service.js';
 import {

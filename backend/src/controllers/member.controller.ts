@@ -1,4 +1,4 @@
-import {  Request,RequestHandler } from 'express';
+import { Request, RequestHandler } from 'express';
 import { User as PrismaUser } from '@prisma/client';
 import { InvalidRequestError, LoginRequiredError } from '../lib/errors.js';
 import { memberService } from '../services/member.service.js';
