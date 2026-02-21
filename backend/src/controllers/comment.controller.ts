@@ -1,10 +1,21 @@
 import { Request, Response } from 'express';
+import { User as PrismaUser } from '@prisma/client';
 import { createdCommentSchema, updateCommentSchema } from '../schemas/comment.schema';
 import * as commentService from '../services/comment.service';
 
+type AuthenticatedRequest = Request & {
+  user?: PrismaUser;
+  userId?: string;
+};
 export async function createComment(req: Request, res: Response) {
+  const authReq = req as AuthenticatedRequest;
+  const dataToValidate = {
+    ...req.body,
+    taskId: req.params.taskId, // URL의 :taskId
+    userId: authReq.user?.id || authReq.userId, // 인증된 유저 ID
+  };
   // Implementation for creating a comment
-  const validatedData = createdCommentSchema.parse(req.body);
+  const validatedData = createdCommentSchema.parse(dataToValidate);
   const newComment = await commentService.createComment(validatedData);
   res.status(200).json(newComment);
 }

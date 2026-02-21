@@ -17,13 +17,23 @@ interface CreateTaskInput {
   endDay: number;
   tags: string[];
   attachments: string[];
+  status?: string; 
+  assignee?: string | null;
 }
 
 export const createTask = async (
   payload: CreateTaskInput
 ): Promise<ActionResult<Task>> => {
   try {
-    const task = await api.createTask(payload);
+    const finalPayload = {
+      ...payload,
+      status: 'todo',             // 기본값 강제 주입
+      assignee: null,             // 기본값 강제 주입
+      tags: payload.tags || [],
+      attachments: payload.attachments || [],
+    };
+    console.log("🚀 백엔드로 보내는 페이로드:", finalPayload);
+    const task = await api.createTask(finalPayload);
     revalidatePath(`/projects/${payload.projectId}/tasks`);
     return {
       success: '할 일 생성 성공',

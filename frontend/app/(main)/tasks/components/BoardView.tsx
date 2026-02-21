@@ -12,6 +12,10 @@ const filterTaskByStatus = (tasks: Task[]) => {
     [TaskStatus.inProgress]: [],
     [TaskStatus.done]: [],
   };
+  if (!Array.isArray(tasks)) {
+    console.error('BoardView: tasks is not an array', tasks);
+    return result;
+  }
   for (const task of tasks) {
     result[task.status].push(task);
   }

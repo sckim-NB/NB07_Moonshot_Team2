@@ -2,7 +2,7 @@ export class CommentResponseDto {
   id!: string;
   content!: string;
   taskId!: string;
-  auther!: {
+  author!: {
     id: string;
     name: string;
     email: string;

@@ -1,14 +1,19 @@
-import { RequestHandler } from 'express';
+import { Request, RequestHandler } from 'express';
+import { User as PrismaUser } from '@prisma/client';
 import { InvalidRequestError, LoginRequiredError } from '../lib/errors.js';
 import { memberService } from '../services/member.service.js';
 
 type ProjectParams = { projectId: string };
 type InvitationParams = { invitationId: string };
 type ProjectUserParams = { projectId: string; userId: string };
-
+type AuthenticatedRequest = Request & {
+  user?: PrismaUser;
+  userId?: string;
+};
 // 요청자 ID 추출 및 검증
-const getRequesterId = (req: unknown): string => {
-  const userId = (req as { userId?: unknown }).userId;
+const getRequesterId = (req: Request): string => {
+  const authReq = req as AuthenticatedRequest;
+  const userId = authReq.user?.id || authReq.userId;
 
   if (typeof userId !== 'string' || !userId) {
     throw new LoginRequiredError();
