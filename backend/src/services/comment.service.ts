@@ -6,7 +6,7 @@ import {
 } from '../schemas/comment.schema';
 import { CommentResponseDto } from '../classes/dtos/comment.response.dto';
 import { CommentRequestDto, CommentUpdateRequestDto } from '../classes/dtos/comment.request.dto';
-import { NotFoundError, NotCommentOwnerError, BadRequestError } from '../lib/errors';
+import { NotFoundError, NotCommentOwnerError } from '../lib/errors';
 
 export async function createComment(data: CreatedCommentInput) {
   const dto = new CommentRequestDto(data);

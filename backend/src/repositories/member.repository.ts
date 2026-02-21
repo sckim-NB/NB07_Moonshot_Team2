@@ -62,7 +62,7 @@ export const memberRepository = {
     // assigneeId -> taskCount
     const taskCountMap = new Map<string, number>();
     rows.forEach((row) => {
-      taskCountMap.set(row.assigneeId, row._count._all);
+      taskCountMap.set(row.assigneeId!, row._count._all);
     });
 
     return taskCountMap;
