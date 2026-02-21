@@ -12,7 +12,7 @@ const TaskItem = ({
   style,
 }: {
   className?: string;
-  projectId: number;
+  projectId: string;
   task: Task;
   style?: React.CSSProperties;
 }) => {

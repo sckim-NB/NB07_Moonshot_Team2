@@ -62,10 +62,10 @@ export const createdTaskSchema = z.object({
   endYear: z.number().int().min(2000).max(2100),
   endMonth: z.number().int().min(1).max(12),
   endDay: z.number().int().min(1).max(31),
-  status: z.enum(['todo', 'in_progress', 'done']),
-  assignee: z.string().nullable(),
-  tags: z.array(z.string()),
-  attachments: z.array(z.string().url()),
+  status: z.enum(['todo', 'in_progress', 'done']).default('todo'),
+  assignee: z.string().nullable().optional().default(null),
+  tags: z.array(z.string()).default([]),
+  attachments: z.array(z.string().url()).default([]),
 });
 
 export type CreatedTaskInput = z.infer<typeof createdTaskSchema>;
@@ -81,10 +81,10 @@ export const updateTaskSchema = z.object({
   endYear: z.number().int().min(2000).max(2100).optional(),
   endMonth: z.number().int().min(1).max(12).optional(),
   endDay: z.number().int().min(1).max(31).optional(),
-  status: z.enum(['todo', 'in_progress', 'done']).optional(),
+  status: z.enum(['todo', 'in_progress', 'done']).default('todo'),
   assignee: z.string().nullable().optional(),
-  tags: z.array(z.string()).optional(),
-  attachments: z.array(z.string().url()).optional(),
+  tags: z.array(z.string()).default([]),
+  attachments: z.array(z.string().url()).default([]),
 });
 
 export type UpdateTaskInput = z.infer<typeof updateTaskSchema>;

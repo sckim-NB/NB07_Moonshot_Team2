@@ -29,7 +29,7 @@ const TaskListPage = async ({
     page?: number;
     order_by?: 'created_at' | 'end_date' | 'title';
     status?: TaskStatus;
-    assignee?: number;
+    assignee?: string;
     keyword?: string;
   }>;
 }) => {

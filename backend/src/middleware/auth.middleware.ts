@@ -11,8 +11,6 @@ export const authenticate = (req: Request, _res: Response, next: NextFunction) =
   if (!token && req.cookies) {
     token = req.cookies['access-token'];
   }
-  console.log('Headers Auth:', req.headers.authorization);
-  console.log('Cookies Auth:', req.cookies?.['access-token']);
 
   // 토큰이 아예 없는 경우
   if (!token) {
@@ -34,30 +32,4 @@ export const authenticate = (req: Request, _res: Response, next: NextFunction) =
 
   next();
 };
-//   const authHeader = req.headers.authorization;
 
-//   // Authorization 헤더 확인
-//   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-//     throw new LoginRequiredError();
-//   }
-
-//   // Bearer 토큰 추출
-//   const token = authHeader.substring(7);
-
-//   // 토큰 검증
-//   const result = verifyAccessToken(token);
-
-//   if (!result.valid) {
-//     if (result.expired) {
-//       throw new TokenExpiredError();
-//     }
-//     throw new LoginRequiredError();
-//   }
-
-//   // req.userId 설정
-//   req.user = {
-//     id: result.payload!.userId,
-//   } as User;
-
-//   next();
-// };

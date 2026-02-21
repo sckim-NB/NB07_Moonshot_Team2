@@ -7,11 +7,32 @@ import { toast } from 'react-toastify';
 import { formatInTimeZone } from 'date-fns-tz';
 import Input from '@/shared/components/Input';
 import BlankProfile from '@/public/assets/blank-profile.svg';
-import { Comment } from '@/types/entities';
+import { Comment as EntityComment} from '@/types/entities';
 import CommentMoreMenu from './CommentMoreMenu';
 import styles from './CommentList.module.css';
 import { createComment } from '../actions';
 
+interface Author {
+  id: string;
+  name: string;
+  email: string;
+  profileImage: string | null;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+}
+interface LocalComment {
+  id: string;
+  content: string;
+  author: Author;
+  taskId: string;
+  createdAt: string; 
+  updatedAt: string;
+}
+
+interface CommentResponse {
+  data: LocalComment[];
+  total: number;
+}
 const cx = classNames.bind(styles);
 
 const CommentItem = ({
@@ -19,12 +40,13 @@ const CommentItem = ({
   comment,
 }: {
   taskId: string;
-  comment: Comment;
+  comment: LocalComment;
 }) => {
-  const author = comment.author!;
+  const author = comment.author;
+  console.log('개별 댓글 작성자 데이터:', author);
   return (
     <div className={cx('comment')}>
-      {author.profileImage ? (
+      {author?.profileImage ? (
         <Image
           className={cx('profileImage')}
           src={author.profileImage}
@@ -37,13 +59,13 @@ const CommentItem = ({
       )}
       <div className={cx('commentBody')}>
         <div className={cx('info')}>
-          <span className={cx('author')}>{author.name}</span>
+          <span className={cx('author')}>{author?.name || '알 수 없는 사용자'}</span>
           <span className={cx('createdAt')}>
-            {formatInTimeZone(
+            {comment.createdAt ?formatInTimeZone(
               comment.createdAt,
               'Asia/Seoul',
               'yyyy. MM. dd. HH:mm:ss'
-            )}
+            ): '날짜 정보 없음'}
           </span>
         </div>
         <div className={cx('commentContent')}>{comment.content}</div>
@@ -51,7 +73,7 @@ const CommentItem = ({
       <CommentMoreMenu
         className={cx('moreMenu')}
         taskId={taskId}
-        comment={comment}
+        comment={comment as unknown as EntityComment}
       />
     </div>
   );
@@ -61,7 +83,7 @@ const CommentList = ({
   comments,
   taskId,
 }: {
-  comments: Comment[];
+  comments: LocalComment[] | CommentResponse;
   taskId: string;
 }) => {
   const [state, dispatch, isPending] = useActionState(
@@ -81,6 +103,10 @@ const CommentList = ({
     },
     { content: '' }
   );
+  console.log('받아온 댓글 데이터:', comments);
+  const commentItems: LocalComment[] = Array.isArray(comments) 
+    ? comments 
+    : (comments as CommentResponse)?.data || [];
   return (
     <>
       <form action={dispatch}>
@@ -93,9 +119,9 @@ const CommentList = ({
         />
       </form>
       <div className={cx('commentList')}>
-        {comments.map((comment) => (
-          <CommentItem key={comment.id} taskId={taskId} comment={comment} />
-        ))}
+        {commentItems.map((comment: LocalComment) => (
+  <CommentItem key={comment.id} taskId={taskId} comment={comment} />
+))}
       </div>
     </>
   );

@@ -1,9 +1,14 @@
 import { Request, Response } from 'express';
 import * as taskService from '../services/task.service';
-import { createdTaskSchema } from '../schemas/task.schema';
+import { createdTaskSchema, updateTaskSchema } from '../schemas/task.schema';
 
 export async function createTask(req: Request, res: Response) {
-  const validatedData = createdTaskSchema.parse(req.body);
+  const { projectId } = req.params;
+  const dataToValidate = {
+    ...req.body,
+    projectId: projectId, 
+  };
+  const validatedData = createdTaskSchema.parse(dataToValidate);
   const newTask = await taskService.createTask(validatedData);
   res.status(200).send(newTask);
 }
@@ -33,7 +38,7 @@ export async function getTask(req: Request, res: Response) {
 
 export async function updateTask(req: Request, res: Response) {
   const taskId = req.params.taskId;
-  const validatedData = createdTaskSchema.parse(req.body);
+  const validatedData = updateTaskSchema.parse(req.body);
   const updatedTask = await taskService.updateTask(taskId as string, validatedData);
   res.status(200).send(updatedTask);
 }
