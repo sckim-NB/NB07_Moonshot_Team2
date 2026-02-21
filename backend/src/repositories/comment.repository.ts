@@ -7,6 +7,9 @@ export async function createComment(data: { content: string; userId: string; tas
       userId: data.userId,
       taskId: data.taskId,
     },
+    include: {
+      user: true, // 생성된 댓글과 함께 유저 정보를 즉시 반환
+    },
   });
 }
 
@@ -16,6 +19,9 @@ export async function listComments(params: { page: number; pageSize: number; tas
     orderBy: { createdAt: 'asc' },
     skip: (params.page - 1) * params.pageSize,
     take: params.pageSize,
+    include: {
+      user: true,
+    },
   });
 
   const totalCount = await prisma.comment.count({

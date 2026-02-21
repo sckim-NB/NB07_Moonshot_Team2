@@ -6,20 +6,10 @@ import {
 } from '../schemas/comment.schema';
 import { CommentResponseDto } from '../classes/dtos/comment.response.dto';
 import { CommentRequestDto, CommentUpdateRequestDto } from '../classes/dtos/comment.request.dto';
-import { NotFoundError, NotCommentOwnerError, BadRequestError } from '../lib/errors';
+import { NotFoundError, NotCommentOwnerError } from '../lib/errors';
 
 export async function createComment(data: CreatedCommentInput) {
   const dto = new CommentRequestDto(data);
-
-  const extingingComment = await commentRepository.getComment(dto.taskId);
-  if (!extingingComment) {
-    throw new NotFoundError();
-  }
-
-  const requesterId = '';
-  if (extingingComment.userId === requesterId) {
-    throw new BadRequestError('You cannot create a comment on your own task.');
-  }
 
   const createdComment = await commentRepository.createComment({
     content: dto.content,
@@ -30,7 +20,7 @@ export async function createComment(data: CreatedCommentInput) {
   return new CommentResponseDto({
     id: createdComment.id,
     content: createdComment.content,
-    auther: {
+    author: {
       id: createdComment.userId,
       name: '',
       email: '',
@@ -43,32 +33,21 @@ export async function createComment(data: CreatedCommentInput) {
 }
 
 export async function listComments(params: ListCommentsInput) {
-  // 🚨 삭제: taskId로 '댓글 하나'를 찾는 이 로직이 404의 범인입니다.
-  // const extingingComment = await commentRepository.getComment(params.taskId);
-  // if (!extingingComment) {
-  //   throw new NotFoundError();
-  // }
-
   const { comments } = await commentRepository.listComments({
     page: params.page ?? 1,
     pageSize: params.pageSize ?? 10,
     taskId: params.taskId,
   });
 
-  // const requesterId = '';
-  // if (extingingComment.userId === requesterId) {
-  //   throw new BadRequestError('You cannot create a comment on your own task.');
-  // }
-
   const commentDtos = comments.map(
     (comment) =>
       new CommentResponseDto({
         id: comment.id,
         content: comment.content,
-        auther: {
+        author: {
           id: comment.userId,
-          name: '',
-          email: '',
+          name: comment.user.name,
+          email: comment.user.email,
           profileImage: '',
         },
         taskId: comment.taskId,
@@ -92,7 +71,7 @@ export async function getComment(commentId: string) {
   return new CommentResponseDto({
     id: comment.id,
     content: comment.content,
-    auther: {
+    author: {
       id: comment.userId,
       name: '',
       email: '',
@@ -123,7 +102,7 @@ export async function updateComment(commentId: string, data: UpdateCommentInput)
     id: updateComment.id,
     content: updateComment.content,
 
-    auther: {
+    author: {
       id: updateComment.userId,
       name: '',
       email: '',

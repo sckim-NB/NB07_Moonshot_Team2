@@ -16,7 +16,10 @@ export async function createTask(data: {
   attachments: string[];
 }) {
   const createData = {
-    projectId: data.projectId,
+    // 🚨 projectId: data.projectId 대신 아래와 같이 '관계'로 연결합니다.
+    project: {
+      connect: { id: data.projectId },
+    },
     title: data.title,
     startYear: data.startYear,
     startMonth: data.startMonth,
@@ -25,7 +28,7 @@ export async function createTask(data: {
     endMonth: data.endMonth,
     endDay: data.endDay,
     status: data.status.toUpperCase() as unknown as TaskStatus,
-    ...(data.assignee ? { assigneeId: data.assignee } : {}),
+    ...(data.assignee ? { assignee: { connect: { id: data.assignee } } } : {}),
     taskTags: {
       create: data.tags.map((tagName) => ({
         tag: {
@@ -85,7 +88,7 @@ export async function taskList(params: {
   const whereClause: Prisma.TaskWhereInput = {
     projectId: params.projectId,
     ...(params.status ? { status: params.status.toUpperCase() as unknown as TaskStatus } : {}),
-    ...(params.assignee ? { assigneeId: params.assignee } : {}),
+    ...(params.assignee ? { assigneeId: String(params.assignee) } : {}),
     ...(params.tags && params.tags.length > 0
       ? {
           taskTags: {
@@ -182,6 +185,14 @@ export async function getTask(taskId: string) {
         },
       },
       attachments: true,
+      comments: {
+        include: {
+          user: true,
+        },
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
     },
   });
 }

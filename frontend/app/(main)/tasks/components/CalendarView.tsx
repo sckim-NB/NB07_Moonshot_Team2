@@ -10,6 +10,10 @@ type Range = [number, number, number];
 type TaskWithGrid = Task & { gridColumn: string; gridRow: number };
 
 const filterTasks = (tasks: Task[], start: Range, end: Range) => {
+  if (!Array.isArray(tasks)) {
+    console.error('tasks is not an array:', tasks);
+    return [];
+  }
   return tasks.filter((task) => {
     const taskStartDate = new Date(
       Date.UTC(task.startYear, task.startMonth - 1, task.startDay)
@@ -21,11 +25,11 @@ const filterTasks = (tasks: Task[], start: Range, end: Range) => {
 };
 
 const sortTasksByStartDay = (tasks: Task[]): Task[] => {
-  return tasks.sort((a, b) => {
+  return [...tasks].sort((a, b) => {
     if (a.startYear === b.startYear) {
       if (a.startMonth === b.startMonth) {
         if (a.startDay === b.startDay) {
-          return a.id - b.id;
+          return a.id.localeCompare(b.id);
         }
         return a.startDay - b.startDay;
       }

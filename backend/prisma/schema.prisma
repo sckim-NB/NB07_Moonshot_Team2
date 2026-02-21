@@ -96,7 +96,7 @@ model Task {
   title       String
   description String?
   projectId   String
-  assigneeId  String
+  assigneeId  String?
   status      TaskStatus   @default(TODO)
   startYear   Int?
   startMonth  Int?
@@ -107,7 +107,7 @@ model Task {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  assignee    User         @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: Restrict)
+  assignee    User?         @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: Restrict)
   subtasks    Subtask[]
   comments    Comment[]
   attachments Attachment[]
