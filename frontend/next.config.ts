@@ -1,6 +1,35 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '5mb', 
+    },
+  },
+  async rewrites() {
+    return [
+      {
+      source: '/api/:path*',
+      destination: 'http://localhost:3000/:path*',
+    },
+      {
+        source: '/uploads/:path*',
+        destination: 'http://localhost:3000/uploads/:path*',
+      },
+    //   {
+    //   source: '/auth/:path*',
+    //   destination: 'http://localhost:3000/auth/:path*',
+    // },
+    // {
+    //   source: '/users/:path*',
+    //   destination: 'http://localhost:3000/users/:path*',
+    // },
+    // {
+    //   source: '/projects/:path*',
+    //   destination: 'http://localhost:3000/projects/:path*',
+    // },
+    ];
+  },
   async redirects() {
     return [
       {

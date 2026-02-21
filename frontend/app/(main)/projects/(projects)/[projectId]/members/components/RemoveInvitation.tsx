@@ -10,7 +10,7 @@ const RemoveInvitation = ({
   projectId,
   invitationId,
 }: {
-  projectId: number;
+  projectId: string;
   invitationId: string | null;
 }) => {
   const handleClick = async () => {

@@ -17,8 +17,8 @@ const DeleteCommentModal = ({
   onSubmit,
   onClose,
 }: {
-  taskId: number;
-  commentId: number;
+  taskId: string;
+  commentId: string;
   isOpen: boolean;
   onSubmit: () => void;
   onClose: () => void;

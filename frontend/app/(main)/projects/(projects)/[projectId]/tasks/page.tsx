@@ -11,7 +11,7 @@ import ChevronRight from '@/public/assets/chevron-right.svg';
 import Link from 'next/link';
 import { getTasksByProjectId } from '@/app/(main)/action';
 import Paginator from '../components/Paginator';
-import { redirect } from 'next/navigation';
+//import { redirect } from 'next/navigation';
 import { TaskStatus } from '@/types/TaskStatus';
 
 const cx = classNames.bind(styles);
@@ -33,12 +33,12 @@ const TaskListPage = async ({
     keyword?: string;
   }>;
 }) => {
-  const { projectId: projectIdString } = await params;
+  const { projectId } = await params;
   const { order_by, status, assignee, keyword, page } = await searchParams;
-  const projectId = Number(projectIdString);
-  if (isNaN(projectId)) {
-    return redirect('/projects');
-  }
+  // const projectId = Number(projectIdString);
+  // // if (isNaN(projectId)) {
+  //   return redirect('/projects');
+  // }
   const { data } = await getTasksByProjectId(projectId, {
     page: page ?? 1,
     limit: PAGE_SIZE,
@@ -47,6 +47,7 @@ const TaskListPage = async ({
     assignee,
     keyword,
   });
+  
   const tasks = data?.data ?? [];
   const total = data?.total ?? 0;
   const pages = Math.ceil(total / PAGE_SIZE);

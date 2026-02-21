@@ -6,7 +6,7 @@ export async function createProject(req: Request, res: Response) {
   const validatedData = createdProjectSchema.parse(req.body);
   const newProject = await projectService.createProject({
     ...validatedData,
-    ownerId: req.userId as string,
+    ownerId: req.user!.id as string,
   });
   res.status(200).send(newProject);
 }

@@ -62,11 +62,15 @@ export const register = async (payload: {
   }
 };
 
-export const refreshToken = async (refreshToken: string | null) => {
+export const refreshToken = async (token: string | null) => {
+  if (!token || token === 'undefined' || token === 'null') {
+    console.error('[프론트] 리프레시 토큰이 없어 요청을 중단합니다.');
+    throw new Error('리프레시 토큰이 없습니다.');
+  }
   try {
-    const response = await axios.post('/auth/refresh', {
+    const response = await axios.post('/auth/refresh',{}, {
       headers: {
-        Authorization: `Bearer ${refreshToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -161,7 +165,7 @@ export const createProject = async (payload: {
   }
 };
 
-export const getProjectById = async (projectId: number): Promise<Project> => {
+export const getProjectById = async (projectId: string): Promise<Project> => {
   try {
     const response = await axios.get(`/projects/${projectId}`);
     return response.data;
@@ -177,7 +181,7 @@ export const getProjectById = async (projectId: number): Promise<Project> => {
 };
 
 export const updateProject = async (
-  projectId: number,
+  projectId: string,
   payload: {
     name?: string;
     description?: string;
@@ -187,7 +191,7 @@ export const updateProject = async (
   return response.data;
 };
 
-export const deleteProject = async (projectId: number) => {
+export const deleteProject = async (projectId: string) => {
   await axios.delete(`/projects/${projectId}`);
 };
 
@@ -197,11 +201,11 @@ export interface GetProjectUsersParams {
 }
 
 export const getProjectUsers = async (
-  projectId: number,
+  projectId: string,
   params: GetProjectUsersParams
 ): Promise<PaginationResponse<UserWithCounts>> => {
   try {
-    const response = await axios.get(`/projects/${projectId}/users`, {
+    const response = await axios.get(`/projects/${projectId}/members`, {
       params,
     });
     return response.data;
@@ -217,7 +221,7 @@ export const getProjectUsers = async (
   }
 };
 
-export const inviteMember = async (projectId: number, email: string) => {
+export const inviteMember = async (projectId: string, email: string) => {
   try {
     await axios.post(`/projects/${projectId}/invitations`, { email });
   } catch (error) {
@@ -231,7 +235,7 @@ export const inviteMember = async (projectId: number, email: string) => {
   }
 };
 
-export const removeMember = async (projectId: number, userId: number) => {
+export const removeMember = async (projectId: string, userId: string) => {
   try {
     await axios.delete(`/projects/${projectId}/users/${userId}`);
   } catch (error) {
@@ -248,7 +252,7 @@ export const removeMember = async (projectId: number, userId: number) => {
 export interface GetTasksByProjectIdParams {
   order_by?: 'created_at' | 'end_date' | 'title';
   status?: TaskStatus;
-  assignee?: number;
+  assignee?: string;
   from?: Date;
   to?: Date;
   keyword?: string;
@@ -257,7 +261,7 @@ export interface GetTasksByProjectIdParams {
 }
 
 export const getTasksByProjectId = async (
-  projectId: number,
+  projectId: string,
   params: GetTasksByProjectIdParams
 ): Promise<PaginationResponse<Task>> => {
   try {
@@ -277,7 +281,7 @@ export const getTasksByProjectId = async (
 };
 
 export const createTask = async (payload: {
-  projectId: number;
+  projectId: string;
   title: string;
   description: string;
   startYear: number;
@@ -304,7 +308,7 @@ export const createTask = async (payload: {
   }
 };
 
-export const getTaskById = async (taskId: number): Promise<Task> => {
+export const getTaskById = async (taskId: string): Promise<Task> => {
   try {
     const response = await axios.get(`/tasks/${taskId}`);
     return response.data;
@@ -320,7 +324,7 @@ export const getTaskById = async (taskId: number): Promise<Task> => {
 };
 
 export const updateTask = async (
-  taskId: number,
+  taskId: string,
   payload: UpdateTaskPayload
 ) => {
   try {
@@ -337,12 +341,12 @@ export const updateTask = async (
   }
 };
 
-export const deleteTask = async (taskId: number) => {
+export const deleteTask = async (taskId: string) => {
   await axios.delete(`/tasks/${taskId}`);
 };
 
 export const getSubTasksByTaskId = async (
-  taskId: number
+  taskId: string
 ): Promise<SubTask[]> => {
   try {
     const response = await axios.get(`/tasks/${taskId}/subtasks`);
@@ -360,7 +364,7 @@ export const getSubTasksByTaskId = async (
 };
 
 export const createSubTask = async (
-  taskId: number,
+  taskId: string,
   payload: {
     title: string;
   }
@@ -381,7 +385,7 @@ export const createSubTask = async (
 };
 
 export const updateSubTask = async (
-  subtaskId: number,
+  subtaskId: string,
   payload: {
     title?: string;
     status?: TaskStatus;
@@ -402,7 +406,7 @@ export const updateSubTask = async (
   }
 };
 
-export const deleteSubtask = async (subtaskId: number) => {
+export const deleteSubtask = async (subtaskId: string) => {
   try {
     await axios.delete(`/subtasks/${subtaskId}`);
   } catch (error) {
@@ -418,7 +422,7 @@ export const deleteSubtask = async (subtaskId: number) => {
 };
 
 export const getCommentsByTaskId = async (
-  taskId: number
+  taskId: string
 ): Promise<Comment[]> => {
   try {
     const response = await axios.get(`/tasks/${taskId}/comments`);
@@ -435,7 +439,7 @@ export const getCommentsByTaskId = async (
 };
 
 export const createComment = async (
-  taskId: number,
+  taskId: string,
   payload: {
     content: string;
   }
@@ -455,7 +459,7 @@ export const createComment = async (
 };
 
 export const updateComment = async (
-  commentId: number,
+  commentId: string,
   payload: {
     content: string;
   }
@@ -474,7 +478,7 @@ export const updateComment = async (
   }
 };
 
-export const deleteComment = async (commentId: number) => {
+export const deleteComment = async (commentId: string) => {
   try {
     await axios.delete(`/comments/${commentId}`);
   } catch (error) {
@@ -490,7 +494,7 @@ export const deleteComment = async (commentId: number) => {
 
 export const getMyTasks = async (params: FindMyTasksQuery): Promise<Task[]> => {
   try {
-    const response = await axios.get('/users/me/tasks', {
+    const response = await axios.get('/users/me/projects/tasks', {
       params,
     });
     return response.data;
@@ -505,11 +509,10 @@ export const getMyTasks = async (params: FindMyTasksQuery): Promise<Task[]> => {
   }
 };
 
-export const uploadFiles = async (files: File[]): Promise<string[]> => {
+export const uploadFiles = async (files: File[]): Promise<{ message: string; url: string }> => {
   const formData = new FormData();
-  files.forEach((file) => {
-    formData.append('files', file);
-  });
+  // 백엔드 라우터가 upload.single('files') 이므로 키값을 'files'로 유지
+  formData.append('files', files[0]);
   try {
     const response = await axios.postForm('/files', formData);
     return response.data;

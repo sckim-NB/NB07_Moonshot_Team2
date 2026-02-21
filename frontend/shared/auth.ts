@@ -51,10 +51,14 @@ export const deleteAuthCookies = async () => {
 };
 
 export const getAccessToken = async (): Promise<string | null> => {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get(ACCESS_TOKEN_COOKIE_NAME)?.value;
-  if (!accessToken) {
-    return null;
+  if (typeof window !== 'undefined') {
+    // 브라우저에서는 js-cookie 같은 라이브러리를 쓰거나 document.cookie를 파싱해야 합니다.
+    const match = document.cookie.match(new RegExp('(^| )access-token=([^;]+)'));
+    return match ? match[2] : null;
   }
-  return accessToken;
+  const { cookies } = await import('next/headers'); // 동적 임포트로 브라우저 에러 방지
+  const cookieStore = await cookies();
+  //const accessToken = cookieStore.get(ACCESS_TOKEN_COOKIE_NAME)?.value;
+  
+  return cookieStore.get(ACCESS_TOKEN_COOKIE_NAME)?.value || null;
 };

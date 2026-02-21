@@ -22,6 +22,8 @@ export async function createProject(data: CreatedProjectInput & { ownerId: strin
     ownerId: dto.ownerId,
   });
 
+  await projectRepository.addProjectMember(createdProject.id, dto.ownerId, 'OWNER');
+
   return new projectResponseDto({
     id: createdProject.id,
     name: createdProject.name,

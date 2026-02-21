@@ -25,8 +25,8 @@ export interface FindByTasksByProjectIdPaginationOption
 export interface FindMyTasksQuery {
   from?: string;
   to?: string;
-  project_id?: number;
+  project_id?: string;
   status?: 'todo' | 'in_progress' | 'done';
-  assignee_id?: number;
+  assignee_id?: string;
   keyword?: string;
 }

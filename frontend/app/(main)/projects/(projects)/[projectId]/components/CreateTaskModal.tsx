@@ -31,7 +31,7 @@ const CreateTaskModal = ({
   onSubmit,
   onClose,
 }: {
-  projectId: number;
+  projectId: string;
   isOpen: boolean;
   onSubmit: () => void;
   onClose: () => void;

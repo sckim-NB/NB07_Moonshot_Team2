@@ -226,20 +226,20 @@ export async function updateTask(
                 },
               },
             })),
-            ...(data.attachments !== undefined
-              ? {
-                  attachments: {
-                    deleteMany: {},
-                    create: data.attachments.map((url) => ({
-                      url,
-                      filename: url.split('/').pop() || 'unknown',
-                      filepath: url,
-                      mimetype: 'application/octet-stream',
-                      size: 0,
-                    })),
-                  },
-                }
-              : {}),
+          },
+        }
+      : {}),
+    ...(data.attachments !== undefined
+      ? {
+          attachments: {
+            deleteMany: {},
+            create: data.attachments.map((url) => ({
+              url,
+              filename: url.split('/').pop() || 'unknown',
+              filepath: url,
+              mimetype: 'application/octet-stream',
+              size: 0,
+            })),
           },
         }
       : {}),

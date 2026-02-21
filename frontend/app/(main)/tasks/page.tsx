@@ -32,21 +32,21 @@ const MyTaskListPage = async ({
       now.getUTCDate(),
     ]);
   }
-  const projectId = Number(project_id);
-  const assigneeId = Number(assignee_id);
+  const projectId = project_id;
+  const assigneeId = assignee_id;
 
   const { data: taskResult } = await getMyTasks({
-    project_id: Number.isNaN(projectId) ? undefined : projectId,
-    status: (status as TaskStatus) ?? undefined,
-    assignee_id: Number.isNaN(assigneeId) ? undefined : assigneeId,
-    from: from ?? undefined,
-    to: to ?? undefined,
-    keyword: keyword ?? undefined,
+    project_id: projectId || undefined ,
+    status: (status as TaskStatus) || undefined,
+    assignee_id: assigneeId || undefined,
+    from: from || undefined,
+    to: to || undefined,
+    keyword: keyword || undefined,
   });
   const tasks = taskResult ?? [];
 
   let members: UserWithCounts[] = [];
-  if (!Number.isNaN(projectId)) {
+  if (projectId) {
     const { data: membersResult } = await getProjectUsers(projectId, {
       page: 1,
       limit: 100,

@@ -7,7 +7,7 @@ import { PaginationResponse } from '@/types/pagination';
 import { revalidatePath } from 'next/cache';
 
 export const getProjectUsers = async (
-  projectId: number,
+  projectId: string,
   params: api.GetProjectUsersParams
 ): Promise<ActionResult<PaginationResponse<UserWithCounts>>> => {
   try {
@@ -30,7 +30,7 @@ export const getProjectUsers = async (
 };
 
 export const removeMember = async (
-  projectId: number,
+  projectId: string,
   userId: number
 ): Promise<ActionResult<null>> => {
   try {
@@ -53,7 +53,7 @@ export const removeMember = async (
 };
 
 export const removeInvitation = async (
-  projectId: number,
+  projectId: string,
   invitationId: string
 ): Promise<ActionResult<null>> => {
   try {

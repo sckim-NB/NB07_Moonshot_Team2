@@ -17,7 +17,7 @@ const RemoveMemberModal = ({
   onSubmit,
   onClose,
 }: {
-  projectId: number;
+  projectId: string;
   userId: number;
   isOpen: boolean;
   onSubmit: () => void;

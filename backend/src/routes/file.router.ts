@@ -6,6 +6,6 @@ import { authenticate } from '../middleware/auth.middleware';
 
 const fileRouter = Router();
 
-fileRouter.post('/', authenticate, upload.single('image'), uploadFile);
+fileRouter.post('/', authenticate, upload.single('files'), uploadFile);
 
 export default fileRouter;

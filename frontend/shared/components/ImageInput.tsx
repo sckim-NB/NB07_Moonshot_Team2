@@ -33,7 +33,7 @@ const ImageInput = ({
       toast.success(success);
     }
 
-    const nextUrl = data?.[0];
+    const nextUrl = data?.url;
     if (nextUrl && typeof nextUrl === 'string') {
       onChange(nextUrl);
     }

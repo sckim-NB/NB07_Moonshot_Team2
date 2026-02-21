@@ -16,7 +16,7 @@ const ProjectIcon = ({
   name,
 }: {
   className?: string;
-  projectId: number;
+  projectId: string;
   name: string;
 }) => {
   const colorStyle = getColorStyle(`${projectId}-${name}`);
