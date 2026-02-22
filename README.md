@@ -55,27 +55,28 @@
 	- 할 일 별 실시간 댓글 소통
 
 ## **📂 프로젝트 구조**
-	##### **- Layered Architecture를 적용하여 관심사를 분리하고 유지보수성을 높였습니다.**
-
-`backend/`
-`├── prisma/             # Database Schema`
-`├── scripts             # test code`
-`├── uploads             # File Upload 저장`  
-`├── src/`
-`│   ├── app.ts          # main 실행 파일`
-`│   ├── __tests__       # Test 데이터`
-`│   ├── classes`
-`│   │    └── dto        # 관심사 분리를 위한 dto`
-`│   ├── controllers/    # HTTP 요청 처리 및 응답`
-`│   ├── services/       # 비즈니스 로직`
-`│   ├── repositories/   # DB 접근 로직 ( Prisma )`
-`│   ├── middlewares/    # 인증 및 에러 처리`
-`│   ├── routes/         # 엔드포인트 정의`
-`│   ├── lib/            # 공통 유틸리티 ( 인증, 에러 등 )`
-`│   ├── schemas/        # 검증을 위한 별도 스키마`
-`│   ├── utils/          # async Handler`
-`│   ├── validators      # 하위 할 일 별도 검증 파일`
-`│   └── types/          # 타입 정의 파일`
+##### **- Layered Architecture를 적용하여 관심사를 분리하고 유지보수성을 높였습니다.**
+```text
+backend/
+├── prisma/             # Database Schema
+├── scripts             # test code
+├── uploads             # File Upload 저장  
+├── src/
+│   ├── app.ts          # main 실행 파일
+│   ├── __tests__       # Test 데이터
+│   ├── classes
+│   │    └── dto        # 관심사 분리를 위한 dto
+│   ├── controllers/    # HTTP 요청 처리 및 응답
+│   ├── services/       # 비즈니스 로직
+│   ├── repositories/   # DB 접근 로직 ( Prisma )
+│   ├── middlewares/    # 인증 및 에러 처리
+│   ├── routes/         # 엔드포인트 정의
+│   ├── lib/            # 공통 유틸리티 ( 인증, 에러 등 )
+│   ├── schemas/        # 검증을 위한 별도 스키마
+│   ├── utils/          # async Handler
+│   ├── validators      # 하위 할 일 별도 검증 파일
+│   └── types/          # 타입 정의 파일
+```
 
 ## **🚀 시작하기**
 #### 1. **저장소 클론**
