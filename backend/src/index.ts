@@ -4,7 +4,7 @@ import { prisma } from './lib/db.js';
 
 const PORT = env.PORT;
 
-const server = app.listen(PORT, '0.0.0.0',() => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
   console.log(`🌍 Environment: ${env.NODE_ENV}`);
