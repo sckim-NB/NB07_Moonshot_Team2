@@ -1,4 +1,4 @@
-import { prisma } from '../lib/db';
+import { prisma } from '../lib/db.js';
 import type { Prisma, TaskStatus } from '@prisma/client';
 
 export async function createTask(data: {
