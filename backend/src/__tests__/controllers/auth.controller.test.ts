@@ -60,6 +60,7 @@ describe('Auth Controller', () => {
 
       expect(authService.initiateGoogleOAuth).toHaveBeenCalled();
       expect(mockRes.redirect).toHaveBeenCalledWith(307, 'http://google.test');
+      // expect(mockRes.redirect).toHaveBeenCalledWith(307, expect.stringContaining('/api/auth/google/callback?accessToken='));
     });
   });
 
@@ -87,7 +88,7 @@ describe('Auth Controller', () => {
       expect(authService.handleGoogleCallback).toHaveBeenCalledWith('test-code');
       expect(mockRes.redirect).toHaveBeenCalledWith(
         307,
-        'http://frontend.test?accessToken=access&refreshToken=refresh'
+        'http://frontend.test/api/auth/google/callback?accessToken=access&refreshToken=refresh'
       );
     });
 

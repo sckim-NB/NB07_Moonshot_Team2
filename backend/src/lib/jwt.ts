@@ -25,7 +25,9 @@ export const generateRefreshToken = (userId: string): string => {
 
 export const verifyAccessToken = (token: string): JwtVerifyResult => {
   try {
-    const payload = jwt.verify(token, env.JWT_SECRET) as JwtPayload;
+    const payload = jwt.verify(token, env.JWT_SECRET, {
+      clockTolerance: process.env.NODE_ENV === 'test' ? 0 : 30,
+    }) as JwtPayload;
     return {
       valid: true,
       payload,
@@ -46,7 +48,9 @@ export const verifyAccessToken = (token: string): JwtVerifyResult => {
 
 export const verifyRefreshToken = (token: string): JwtVerifyResult => {
   try {
-    const payload = jwt.verify(token, env.JWT_REFRESH_SECRET) as JwtPayload;
+    const payload = jwt.verify(token, env.JWT_REFRESH_SECRET, {
+      clockTolerance: process.env.NODE_ENV === 'test' ? 0 : 30,
+    }) as JwtPayload;
     return {
       valid: true,
       payload,

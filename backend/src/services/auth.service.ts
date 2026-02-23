@@ -114,7 +114,8 @@ export const initiateGoogleOAuth = (): GoogleOAuthUrlResponseDto => {
     `redirect_uri=${encodeURIComponent(env.GOOGLE_CALLBACK_URL)}&` +
     `response_type=code&` +
     `scope=${encodeURIComponent('openid email profile')}&` +
-    `access_type=offline`;
+    `access_type=offline` +
+    `&prompt=select_account`;
 
   // Response DTO로 변환하여 반환
   return new GoogleOAuthUrlResponseDto(googleAuthUrl);

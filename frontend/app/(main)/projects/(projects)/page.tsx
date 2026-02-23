@@ -6,6 +6,9 @@ import CreateProject from './components/CreateProject';
 import { ProjectWithCounts } from '@/types/entities';
 import Link from 'next/link';
 import { getMyProjectsWithCounts } from './actions';
+import { setAuthCookies } from '@/shared/auth';
+import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
 const cx = classNames.bind(styles);
 
 const ProjectListItem = ({ project }: { project: ProjectWithCounts }) => {
@@ -69,12 +72,24 @@ const MyProjectListPage = async ({
 }: {
   searchParams: Promise<{
     sort: 'latest' | 'name';
+    accessToken?: string;
+    refreshToken?: string;
   }>;
 }) => {
-  const { sort } = await searchParams;
-  const { data: projectsWithCounts } = await getMyProjectsWithCounts({
-    sort,
-  });
+  const { sort, accessToken, refreshToken } = await searchParams;
+  // 1. URL에 토큰이 들어왔을 때 (구글 로그인 직후)
+  if (accessToken && refreshToken) {
+    // 서버 사이드에서 즉시 쿠키를 설정 (httpOnly 적용됨)
+    await setAuthCookies(accessToken, refreshToken);
+    
+    // 쿠키를 구웠으니 깔끔한 URL로 리다이렉트
+    // 이렇게 하면 다시 이 페이지로 들어올 때 accessToken이 없으므로 아래 로직을 탑니다.
+    redirect('/projects'); 
+  }
+  try {
+    const { data: projectsWithCounts } = await getMyProjectsWithCounts({
+      sort: sort || 'latest',
+    });
 
   return (
     <div className={cx(styles.container)}>
@@ -85,6 +100,10 @@ const MyProjectListPage = async ({
       <ProjectList projects={projectsWithCounts ?? []} />
     </div>
   );
+} catch (error) {
+    console.error("인증 실패:", error);
+    redirect('/login');
+  }
 };
 
 export default MyProjectListPage;
