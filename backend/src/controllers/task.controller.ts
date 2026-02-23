@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import * as taskService from '../services/task.service';
-import { createdTaskSchema, updateTaskSchema } from '../schemas/task.schema';
+import * as taskService from '../services/task.service.js';
+import { createdTaskSchema, updateTaskSchema } from '../schemas/task.schema.js';
 
 export async function createTask(req: Request, res: Response) {
   const { projectId } = req.params;

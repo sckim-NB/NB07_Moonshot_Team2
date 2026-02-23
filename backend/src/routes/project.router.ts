@@ -1,6 +1,6 @@
 import express from 'express';
-import { asyncHandler } from '../utils/asyncHandler';
-import { authenticate } from '../middleware/auth.middleware';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import { authenticate } from '../middleware/auth.middleware.js';
 import {
   createProject,
   getProject,

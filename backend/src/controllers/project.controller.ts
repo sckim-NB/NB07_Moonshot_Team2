@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { createdProjectSchema } from '../schemas/project.schema';
-import * as projectService from '../services/project.service';
+import { createdProjectSchema } from '../schemas/project.schema.js';
+import * as projectService from '../services/project.service.js';
 
 export async function createProject(req: Request, res: Response) {
   const validatedData = createdProjectSchema.parse(req.body);

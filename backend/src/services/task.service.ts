@@ -1,9 +1,9 @@
-import * as taskRepository from '../repositories/task.repository';
-import * as projectRepository from '../repositories/project.repository';
-import { CreatedTaskInput } from '../schemas/task.schema';
-import { TaskRequestDto, TaskUpdateRequestDto } from '../classes/dtos/task.request.dto';
-import { TaskResponseDto } from '../classes/dtos/task.response.dto';
-import { NotFoundError, NotProjectMemberError } from '../lib/errors';
+import * as taskRepository from '../repositories/task.repository.js';
+import * as projectRepository from '../repositories/project.repository.js';
+import { CreatedTaskInput } from '../schemas/task.schema.js';
+import { TaskRequestDto, TaskUpdateRequestDto } from '../classes/dtos/task.request.dto.js';
+import { TaskResponseDto } from '../classes/dtos/task.response.dto.js';
+import { NotFoundError, NotProjectMemberError } from '../lib/errors.js';
 
 export async function createTask(data: CreatedTaskInput) {
   const dto = new TaskRequestDto();

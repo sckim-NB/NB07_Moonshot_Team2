@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { User as PrismaUser } from '@prisma/client';
-import { createdCommentSchema, updateCommentSchema } from '../schemas/comment.schema';
-import * as commentService from '../services/comment.service';
+import { createdCommentSchema, updateCommentSchema } from '../schemas/comment.schema.js';
+import * as commentService from '../services/comment.service.js';
 
 type AuthenticatedRequest = Request & {
   user?: PrismaUser;
