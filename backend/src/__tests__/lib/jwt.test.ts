@@ -58,14 +58,14 @@ describe('JWT 유틸리티', () => {
       expect(result.expired).toBeUndefined();
     });
 
-    it('만료된 토큰을 검증하면 expired: true를 반환해야 함', async () => {
+    it('만료된 토큰을 검증하면 expired: true를 반환해야 함', () => {
       // 1ms 후 만료되는 토큰 생성
       const expiredToken = jwt.sign({ userId: testUserId } as JwtPayload, env.JWT_SECRET, {
-        expiresIn: '1ms',
+        expiresIn: '-1s',
       });
 
       // 토큰이 만료될 때까지 대기
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      // await new Promise((resolve) => setTimeout(resolve, 10));
 
       const result = verifyAccessToken(expiredToken);
 
@@ -107,14 +107,14 @@ describe('JWT 유틸리티', () => {
       expect(result.expired).toBeUndefined();
     });
 
-    it('만료된 토큰을 검증하면 expired: true를 반환해야 함', async () => {
+    it('만료된 토큰을 검증하면 expired: true를 반환해야 함', () => {
       // 1ms 후 만료되는 토큰 생성
       const expiredToken = jwt.sign({ userId: testUserId } as JwtPayload, env.JWT_REFRESH_SECRET, {
-        expiresIn: '1ms',
+        expiresIn: '-1s',
       });
 
       // 토큰이 만료될 때까지 대기
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      // await new Promise((resolve) => setTimeout(resolve, 10));
 
       const result = verifyRefreshToken(expiredToken);
 

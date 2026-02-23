@@ -47,7 +47,7 @@ export const googleCallback = async (req: Request, res: Response): Promise<void>
 
   try {
     const tokens = await authService.handleGoogleCallback(code);
-    const redirectUrl = `${env.FRONTEND_URL}?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`;
+    const redirectUrl = `${env.FRONTEND_URL}/api/auth/google/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`;
     res.redirect(307, redirectUrl);
   } catch {
     // 에러 발생 시 프론트엔드로 에러 전달
