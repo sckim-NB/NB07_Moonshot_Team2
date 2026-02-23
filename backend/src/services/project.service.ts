@@ -1,13 +1,13 @@
-import * as projectRepository from '../repositories/project.repository';
+import * as projectRepository from '../repositories/project.repository.js';
 import {
   InvalidRequestError,
   NotFoundError,
   NotProjectMemberError,
   NotProjectOwnerError,
-} from '../lib/errors';
-import { CreatedProjectInput } from '../schemas/project.schema';
-import { projectRequestDto, projectUpdateDto } from '../classes/dtos/project.request.dto';
-import { projectResponseDto } from '../classes/dtos/project.response.dto';
+} from '../lib/errors.js';
+import { CreatedProjectInput } from '../schemas/project.schema.js';
+import { projectRequestDto, projectUpdateDto } from '../classes/dtos/project.request.dto.js';
+import { projectResponseDto } from '../classes/dtos/project.response.dto.js';
 
 export async function createProject(data: CreatedProjectInput & { ownerId: string }) {
   const dto = new projectRequestDto(data);

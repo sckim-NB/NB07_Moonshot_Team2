@@ -1,19 +1,19 @@
 import bcrypt from 'bcrypt';
 import { Prisma } from '@prisma/client';
-import { UserRepository } from '../repositories/user.repository';
+import { UserRepository } from '../repositories/user.repository.js';
 import {
   UserNotFoundError,
   InvalidRequestError,
   InvalidDataFormatError,
   InvalidCredentialsError,
-} from '../lib/errors';
+} from '../lib/errors.js';
 import {
   UpdateUserDto,
   GetProjectsQuery,
   GetTasksQuery,
   TaskWithDetails,
   ProjectWithCounts,
-} from '../dtos/user.dto';
+} from '../dtos/user.dto.js';
 export class UserService {
   private userRepository = new UserRepository();
 

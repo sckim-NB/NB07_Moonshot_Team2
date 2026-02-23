@@ -1,12 +1,12 @@
-import * as commentRepository from '../repositories/comment.repository';
+import * as commentRepository from '../repositories/comment.repository.js';
 import {
   CreatedCommentInput,
   ListCommentsInput,
   UpdateCommentInput,
-} from '../schemas/comment.schema';
-import { CommentResponseDto } from '../classes/dtos/comment.response.dto';
-import { CommentRequestDto, CommentUpdateRequestDto } from '../classes/dtos/comment.request.dto';
-import { NotFoundError, NotCommentOwnerError } from '../lib/errors';
+} from '../schemas/comment.schema.js';
+import { CommentResponseDto } from '../classes/dtos/comment.response.dto.js';
+import { CommentRequestDto, CommentUpdateRequestDto } from '../classes/dtos/comment.request.dto.js';
+import { NotFoundError, NotCommentOwnerError } from '../lib/errors.js';
 
 export async function createComment(data: CreatedCommentInput) {
   const dto = new CommentRequestDto(data);
