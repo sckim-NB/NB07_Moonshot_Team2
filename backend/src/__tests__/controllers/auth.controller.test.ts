@@ -59,7 +59,7 @@ describe('Auth Controller', () => {
       await authController.google(mockReq as Request, mockRes as Response);
 
       expect(authService.initiateGoogleOAuth).toHaveBeenCalled();
-      expect(mockRes.redirect).toHaveBeenCalledWith(307, 'http://google.test')
+      expect(mockRes.redirect).toHaveBeenCalledWith(307, 'http://google.test');
       // expect(mockRes.redirect).toHaveBeenCalledWith(307, expect.stringContaining('/api/auth/google/callback?accessToken='));
     });
   });
@@ -102,7 +102,7 @@ describe('Auth Controller', () => {
       await authController.googleCallback(mockReq as Request, mockRes as Response);
 
       expect(mockRes.redirect).toHaveBeenCalledWith(
-        307, 
+        307,
         'http://frontend.test/login?error=oauth_failed'
       );
     });
