@@ -16,15 +16,19 @@ const SOCIAL_BUTTON_IMAGE_MAP = {
 };
 
 const SocialButton = ({ provider }: { provider: OAuthProvider }) => {
+  // const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://nb07-moonshot-team2-yoeh.onrender.com';
+  const apiUrl =  'http://localhost:3000';
+  const authUrl = `${apiUrl}/api/auth/${provider.toLowerCase()}`;
   return (
-    <div className={cx(styles.socialButton, provider)}>
+    <a href={authUrl} className={cx(styles.socialButton, provider)}>
       <Image
         className={cx(styles.socialButtonImage)}
         src={SOCIAL_BUTTON_IMAGE_MAP[provider]}
         alt={provider}
       />
-    </div>
+    </a>
   );
 };
 
 export default SocialButton;
+//https://nb07-moonshot-team2-yoeh.onrender.com/auth/google

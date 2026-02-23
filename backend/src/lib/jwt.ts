@@ -25,7 +25,8 @@ export const generateRefreshToken = (userId: string): string => {
 
 export const verifyAccessToken = (token: string): JwtVerifyResult => {
   try {
-    const payload = jwt.verify(token, env.JWT_SECRET) as JwtPayload;
+    // 30초의 오차 시간 추가
+    const payload = jwt.verify(token, env.JWT_SECRET, { clockTolerance: 30 }) as JwtPayload;
     return {
       valid: true,
       payload,
@@ -46,7 +47,7 @@ export const verifyAccessToken = (token: string): JwtVerifyResult => {
 
 export const verifyRefreshToken = (token: string): JwtVerifyResult => {
   try {
-    const payload = jwt.verify(token, env.JWT_REFRESH_SECRET) as JwtPayload;
+    const payload = jwt.verify(token, env.JWT_REFRESH_SECRET, { clockTolerance: 30 }) as JwtPayload;
     return {
       valid: true,
       payload,
