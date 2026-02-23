@@ -1,4 +1,4 @@
-import { prisma } from '../lib/db';
+import { prisma } from '../lib/db.js';
 
 export async function createComment(data: { content: string; userId: string; taskId: string }) {
   return await prisma.comment.create({
